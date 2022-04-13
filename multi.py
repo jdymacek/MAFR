@@ -88,7 +88,7 @@ matrix_two = imageToMatrix(img_two,blockSize)
 #print('Samples: ' + str(n_samples))
 #print('Features: ' + str(n_features))
 
-n_components = 64
+n_components = 32
 
 print("TRAINING SET: EXTRACTING THE TOP %d %s..." % (n_components, 'Non-negative components - NMF'))
 #t0 = time()
@@ -108,12 +108,12 @@ print(np.matmul(inverse_h, h1))
 
 w3 = np.matmul(tile_matrix, inverse_h)
 err = norm(tile_matrix, w3, h1)
-total = 0.0
-for val in err:
-	for j in val:
-		total += j
+#total = 0.0
+#for val in err:
+#	for j in val:
+#		total += j
 
-print(f"Error from new w: {total}")
+#print(f"Error from new w: {total}")
 
 if w3.all() == w1.all():
   print("The same W")
@@ -134,7 +134,7 @@ else:
 #print(f'ERROR: {estim.reconstruction_err_}')
 
 #r_matrix = estim.inverse_transform(w2)
-r_matrix = np.matmul(w2, h1);
+r_matrix = np.matmul(w3, h2);
 
 #print(recon)
 
