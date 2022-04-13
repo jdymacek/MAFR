@@ -48,31 +48,36 @@ def matrixToImage(tiles, width, height):
 
         return result
 
-blockSize = 32
+def norm(matrix, w, h):
+  prod = np.matmul(w,h)
+  return matrix - prod
 
-src_img = Image.open('images/black-bill-cuckoo-1.png')
+
+blockSize = 16
+
+src_img = Image.open('warbler-1.png')
 src_img = ImageOps.grayscale(src_img)
 src_img = src_img.resize(((src_img.width//blockSize)*blockSize,(src_img.height//blockSize)*blockSize))
 print(src_img.size)
 
-img_two = Image.open('images/black-bill-cuckoo-2.png')
+img_two = Image.open('warbler-2.png')
 img_two = ImageOps.grayscale(img_two)
 img_two = img_two.resize(((img_two.width//blockSize)*blockSize,(img_two.height//blockSize)*blockSize))
 
-auw_img = Image.open('images/auwaaz.png')
-auw_img = ImageOps.grayscale(auw_img)
+#auw_img = Image.open('images/auwaaz.png')
+#auw_img = ImageOps.grayscale(auw_img)
 
 
-recon_img = Image.open('images/cmwany11.png')
-recon_img = ImageOps.grayscale(recon_img)
-recon_img = recon_img.resize(((recon_img.width//blockSize)*blockSize,(recon_img.height//blockSize)*blockSize))
+#recon_img = Image.open('images/cmwany11.png')
+#recon_img = ImageOps.grayscale(recon_img)
+#recon_img = recon_img.resize(((recon_img.width//blockSize)*blockSize,(recon_img.height//blockSize)*blockSize))
 
 tile_matrix = imageToMatrix(src_img,blockSize)
 
 matrix_two = imageToMatrix(img_two,blockSize)
-auw_matrix = imageToMatrix(auw_img,blockSize)
+#auw_matrix = imageToMatrix(auw_img,blockSize)
 
-recon_matrix = np.array(recon_img)
+#recon_matrix = np.array(recon_img)
 
 #tile_matrix = np.concatenate((tile_matrix,oven_matrix))
 #tile_matrix = np.concatenate((tile_matrix,auw_matrix))
@@ -83,7 +88,7 @@ recon_matrix = np.array(recon_img)
 #print('Samples: ' + str(n_samples))
 #print('Features: ' + str(n_features))
 
-n_components = 32
+n_components = 64
 
 print("TRAINING SET: EXTRACTING THE TOP %d %s..." % (n_components, 'Non-negative components - NMF'))
 #t0 = time()
@@ -98,7 +103,19 @@ h2 = estim.components_
 print(f'H2: {h2}')
 print(f'W2 ERROR: {estim.reconstruction_err_}')
 
-if w1 == w2:
+inverse_h = np.linalg.pinv(h1)
+print(np.matmul(inverse_h, h1))
+
+w3 = np.matmul(tile_matrix, inverse_h)
+err = norm(tile_matrix, w3, h1)
+total = 0.0
+for val in err:
+	for j in val:
+		total += j
+
+print(f"Error from new w: {total}")
+
+if w3.all() == w1.all():
   print("The same W")
 else:
   print("W's are not equal")
