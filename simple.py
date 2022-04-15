@@ -49,7 +49,7 @@ def matrixToImage(tiles, width, height):
 
 	return result 
 
-blockSize = 32
+blockSize = 48
 
 src_img = Image.open('spectrogram.png')
 src_img = ImageOps.grayscale(src_img)
@@ -65,7 +65,7 @@ print(tile_matrix)
 #print('Samples: ' + str(n_samples))
 #print('Features: ' + str(n_features))
 
-n_components = 24
+n_components = 10
 
 print("EXTRACTING THE TOP %d %s..." % (n_components, 'Non-negative components - NMF'))
 #t0 = time()
