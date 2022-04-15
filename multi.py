@@ -98,16 +98,19 @@ w1 = estim.fit_transform(tile_matrix)
 h1 = estim.components_
 print(f'H1: {h1}')
 print(f'W1 ERROR: {estim.reconstruction_err_}')
-w2 = estim.transform(matrix_two)
-h2 = estim.components_
-print(f'H2: {h2}')
-print(f'W2 ERROR: {estim.reconstruction_err_}')
+#w2 = estim.transform(matrix_two)
+#h2 = estim.components_
+#print(f'H2: {h2}')
+#print(f'W2 ERROR: {estim.reconstruction_err_}')
+
+#if h1.all() == h2.all():
+#  print("H is the same")
 
 inverse_h = np.linalg.pinv(h1)
-print(np.matmul(inverse_h, h1))
+#print(np.matmul(inverse_h, h1))
 
-w3 = np.matmul(tile_matrix, inverse_h)
-err = norm(tile_matrix, w3, h1)
+w3 = np.matmul(matrix_two, inverse_h)
+#err = norm(tile_matrix, w3, h1)
 #total = 0.0
 #for val in err:
 #	for j in val:
@@ -134,7 +137,7 @@ else:
 #print(f'ERROR: {estim.reconstruction_err_}')
 
 #r_matrix = estim.inverse_transform(w2)
-r_matrix = np.matmul(w3, h2);
+r_matrix = np.matmul(w3, h1);
 
 #print(recon)
 
