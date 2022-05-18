@@ -2,8 +2,9 @@
 
 import MAFR
 import argparse
+import os
 
-parser = argparse.ArgumentParser(description='Simple Classifier')
+parser = argparse.ArgumentParser(description='Naive Classifier')
 parser.add_argument('-d', help='directory of desired .nmf pattern files') #patterns
 parser.add_argument('-f', help='image file to be tested') #file to be tested
 parser.add_argument('-b', help='block size of tiles')
@@ -24,11 +25,11 @@ for f in files:
   path = directory + '/' + f
   m = MAFR.loadMatrix(path)
   e = MAFR.computeError(img_matrix, m)
-  s = MAFR.getSpecies(f)
+  s = MAFR.getSpecies(path)
   t = (e, s)
   errors.append(t)
-  f.close()
 
 min_tuple = min(errors, key=errors[0])
 
-print(min_tuple[1])
+print(f'Winner is {min_tuple}')
+print(errors)

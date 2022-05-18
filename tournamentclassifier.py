@@ -26,33 +26,28 @@ for f in files:
   path = directory + '/' + f
   m = MAFR.loadMatrix(path)
   e = MAFR.computeError(img_matrix, m)
-  s = MAFR.getSpecies(f)
+  s = MAFR.getSpecies(path)
   if s in errors:
-    errors[s] += e
+    errors[s] += [e]
   else:
     errors[s] = [e]
 
-  print(errors)
+#print(errors)
 
-  keys = errors.keys()
-  winners = {}
+keys = errors.keys()
+winners = {k:0 for k in keys}
 
 for i in range(10000):
-  key_1 = keys[random.randint(0,len(keys))]
-  key_2 = keys[random.randint(0,len(keys))]
-  val_1 = errors[key_1][random.randint(0,len(errors[key_1]))]
-  val_2 = errors[key_2][random.randint(0,len(errors[key_2]))]
+  k = random.sample(keys,2)
+  val_1 = random.sample(errors[k[0]], 1)
+  val_2 = random.sample(errors[k[1]], 1)
   winner = min(val_1, val_2)
-  if winner == val_1:
-    if key_1 in winners:
-      winners[key_1] += 1
-    else:
-      winners[key_1] = 1
-  else if winner == val_2:
-    if key_2 in winners:
-      winners[key_2] += 1
-    else:
-      winners[key_2] = 1
+  if val_1 < val_2:
+      winners[k[0]] += 1
+  else if val_2 < val_1:
+      winners[k[1]] += 1
 
-print(min(d, key=d.get))
+min_key = (min(d, key=d.get))
+print(f'The winner is {min_key} : {winners[min_key]}')
+print(winners)
 
