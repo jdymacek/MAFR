@@ -62,7 +62,20 @@ def matrixToImage(tiles, width, height):
 
         return result
 
-def saveMatrix(matrix, patterns, block_size, bytes_per_entry, dirname):
+### https://stackoverflow.com/questions/46700018/join-two-hex-integers-in-python
+MAX_INT = 255
+NUM_BITS = MAX_INT.bit_length()
+
+def merge_chars(a,b):
+  c = (ord(a) << NUM_BITS) | ord(b)
+  return c
+
+###
+def saveMatrix(matrix, patterns, block_size, species_code, dirname):
+
+
+  species_first = merge_chars(species_code[1], species_code[0])
+  species_last = merge_chars(species_code[3], species_code[2])
 
   header = np.ndarray(8, dtype=np.uint16)
   header[0] = 19790
@@ -71,8 +84,8 @@ def saveMatrix(matrix, patterns, block_size, bytes_per_entry, dirname):
   header[3] = patterns
   header[4] = block_size
   header[5] = block_size
-  header[6] = 0
-  header[7] = 0
+  header[6] = species_first
+  header[7] = species_last
 
   file_bytes = []
   for row in matrix:
@@ -94,22 +107,32 @@ def loadMatrix(mat_file):
 
 #sig, ver, bpe, pat, b_height, b_width, junk = bytearray()
   sig = f.read(4)
+  print(sig)
   ver = f.read(1)
+  print(ver)
   bpe = f.read(1)
-  patterns = f.read(2)
-  height = f.read(2)
-  width = f.read(2)
-  junk = f.read(4)
-
-  print(type(bpe))
-
-  bpe = int.from_bytes(bpe, 'big')
-  print(type(bpe))
   print(bpe)
+  patterns = f.read(2)
+  print(patterns)
+  height = f.read(2)
+  print(height)
+  width = f.read(2)
+  print(width)
+  code = f.read(4)
+  print(code)
+
+  pat = int.from_bytes(patterns, byteorder='little')
+  wid = int.from_bytes(width, byteorder='little')
+  ht = int.from_bytes(height, byteorder='little')
+  byte = int.from_bytes(bpe, byteorder='little')
+  print(pat)
+  print(wid)
+  print(ht)
+  print(byte)
 
   byte_arr = bytearray()
-  byte_arr = f.read(int(patterns)*int(width)*int(height)*int(bpe))
+  byte_arr = f.read(pat*wid*ht*byte)
   a = np.frombuffer(byte_arr, dtype=np.double)
-  matrix = a.reshape(patterns, width*height)
+  matrix = a.reshape(pat, wid*ht)
 
   return matrix
