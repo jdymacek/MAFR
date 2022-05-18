@@ -141,7 +141,6 @@ def loadMatrix(mat_file):
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
-  c = np.matmul(original, patterns)
+  c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
-  e = np.linalg.norm(m_hat - original)
-  return e
+  return np.linalg.norm(original - m_hat)
