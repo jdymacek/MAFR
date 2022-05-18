@@ -87,12 +87,14 @@ def saveMatrix(matrix, patterns, block_size, species_code, dirname):
   header[6] = species_first
   header[7] = species_last
 
-  file_bytes = []
-  for row in matrix:
-    for col in row:
-      file_bytes.append(col)
+#file_bytes = []
+#for row in matrix:
+#for col in row:
+#file_bytes.append(col)
 
-  byte_array = struct.pack('%sf' % len(file_bytes), *file_bytes)
+  byte_array = matrix.tobytes()
+
+#byte_array = struct.pack('%sf' % len(file_bytes), *file_bytes)
 
   new_file = ''
   filename = dirname + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
@@ -130,9 +132,16 @@ def loadMatrix(mat_file):
   print(ht)
   print(byte)
 
-  byte_arr = bytearray()
-  byte_arr = f.read(pat*wid*ht*byte)
+  byte_arr = f.read()
+  print(len(byte_arr))
   a = np.frombuffer(byte_arr, dtype=np.double)
   matrix = a.reshape(pat, wid*ht)
 
   return matrix
+
+def computeError(original, patterns):
+  inv = np.linalg.pinv(patterns)
+  c = np.matmul(original, patterns)
+  m_hat = np.matmul(c, patterns)
+  e = np.linalg.norm(m_hat - original)
+  return e
