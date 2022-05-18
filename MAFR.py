@@ -1,26 +1,17 @@
 #MAFR.py --- Magnificent Frigatebird NFC Module
 
-import sys
 import struct
-import math
 import numpy as np
 from PIL import Image
 from PIL import ImageOps
 
-from time import time
-from sklearn import decomposition
-from skimage import color, io, img_as_ubyte
-import array
-
 def loadImage(filename, size):
   img = Image.open(filename)
   x_n = img.width // size
-  x_diff = (img.width - x_n) // 2
+  x_diff = (img.width % size) // 2
   y_n = img.height // size
 
-  cropped = img.crop((x_diff, 0, x_diff + (size * x_n), size * y_n))
-
-  return cropped
+  return img.crop((x_diff, 0, (img.width - x_diff), img.height - (img.height % size)))
 
 ### images -- PIL image file, size -- height and width of blocks
 def imageToMatrix(image, size):
