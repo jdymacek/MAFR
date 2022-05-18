@@ -135,3 +135,18 @@ def computeError(original, patterns):
   c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
   return np.linalg.norm(original - m_hat)
+
+def getSpecies(mat_file):
+  f = open(mat_file, 'rb')
+  prev = f.read(12)
+  code = f.read(4)
+  s = code.decode('utf-8')
+  #print(s)
+  return s
+
+def getBlocksize(mat_file):
+  f = open(mat_file, 'rb')
+  prev = f.read(8)
+  size = f.read(2)
+  return int.from_bytes(size, byteorder='little')
+
