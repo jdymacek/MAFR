@@ -62,7 +62,7 @@ def merge_chars(a,b):
   return c
 
 ###
-def saveMatrix(matrix, patterns, block_size, species_code, dirname):
+def saveMatrix(matrix, patterns, block_size, species_code, dirname, out=os.getcwd()):
 
 
   species_first = merge_chars(species_code[1], species_code[0])
@@ -88,7 +88,7 @@ def saveMatrix(matrix, patterns, block_size, species_code, dirname):
 #byte_array = struct.pack('%sf' % len(file_bytes), *file_bytes)
 
   new_file = ''
-  filename = dirname + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
+  filename = out + '/' + dirname + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
   f = open(filename, 'wb')
   f.write(header)
   f.write(byte_array)
