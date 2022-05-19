@@ -46,8 +46,9 @@ for filename in file_list:
 
 M = np.concatenate(ml)
 print(M.shape)
-estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=4000)
+estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000)
 w = estim.fit_transform(M)
+print(f'Iterations: {estim.n_iter_}')
 print(f'ERROR: {estim.reconstruction_err_}')
 h = estim.components_
 saveMatrix(h, arg.p, arg.b, arg.s, arg.d)

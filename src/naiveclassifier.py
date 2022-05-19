@@ -22,14 +22,15 @@ files = os.listdir(directory)
 
 errors = []
 for f in files:
-  path = directory + '/' + f
-  m = MAFR.loadMatrix(path)
-  e = MAFR.computeError(img_matrix, m)
-  s = MAFR.getSpecies(path)
-  t = (e, s)
-  errors.append(t)
+  if f.endswith('.nmf'):
+    path = directory + '/' + f
+    m = MAFR.loadMatrix(path)
+    e = MAFR.computeError(img_matrix, m)
+    s = MAFR.getSpecies(path)
+    t = (e, s)
+    errors.append(t)
 
-min_tuple = min(errors, key=errors[0])
+min_tuple = min(errors, key = lambda t: t[1])
 
 print(f'Winner is {min_tuple}')
 print(errors)

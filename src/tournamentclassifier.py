@@ -23,14 +23,15 @@ files = os.listdir(directory)
 
 errors = {}
 for f in files:
-  path = directory + '/' + f
-  m = MAFR.loadMatrix(path)
-  e = MAFR.computeError(img_matrix, m)
-  s = MAFR.getSpecies(path)
-  if s in errors:
-    errors[s] += [e]
-  else:
-    errors[s] = [e]
+  if f.endswith('.nmf'):
+    path = directory + '/' + f
+    m = MAFR.loadMatrix(path)
+    e = MAFR.computeError(img_matrix, m)
+    s = MAFR.getSpecies(path)
+    if s in errors:
+      errors[s] += [e]
+    else:
+      errors[s] = [e]
 
 #print(errors)
 
@@ -44,7 +45,7 @@ for i in range(10000):
   winner = min(val_1, val_2)
   if val_1 < val_2:
       winners[k[0]] += 1
-  else if val_2 < val_1:
+  elif val_2 < val_1:
       winners[k[1]] += 1
 
 min_key = (min(d, key=d.get))
