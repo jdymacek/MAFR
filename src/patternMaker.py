@@ -9,7 +9,7 @@ from PIL import Image
 parser = argparse.ArgumentParser()
 #takes name of the program
 
-parser.add_argument('-d', metavar = 'input_directory', required=False, default ='here', help ='directory where patterns are located')
+parser.add_argument('-d', metavar = 'input_directory', required=False, default ='', help ='directory where patterns are located')
 
 parser.add_argument('-p',  metavar = 'patterns', required=False, default =32, help = 'output_directory')
 
