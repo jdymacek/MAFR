@@ -3,7 +3,6 @@ import sys
 import os
 import numpy as np
 from MAFR import loadImage, imageToMatrix
-from pip.internal import main
 
 parser = argparse.ArgumentParser()
 #takes name of the program
@@ -20,10 +19,9 @@ parser.add_argument('-f', required=False, default = 'foo', help = '')
 arg = parser.parse_args()
 print(arg)
 
-dirPath = '//' + arg.d
-file_list = os.listdir(dirPath)
+file_list = os.listdir(arg.d)
 
-M = np.array()
+M = np.ndarray()
 for filename in file_list:
      if filename.endswith(".png"):
         #looking for the patterns in each png file
