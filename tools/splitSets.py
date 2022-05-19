@@ -6,6 +6,7 @@ import shutil
 
 dirName = str(sys.argv[1])
 newSets =  str(sys.argv[2])
+#splitPercent = str(sys.argv[3])
 
 filePath = os.path.abspath(__file__)
 dirPath = os.path.join(os.path.dirname(filePath), dirName)
@@ -20,24 +21,27 @@ for filename in file_list:
      else:
         continue
 
+curDir = os.getcwd()
+os.chdir('training')
 random.shuffle(random_list)
-training_dir = newSets + "_training"
+trainDir = os.mkdir(newSets)
 sixty_i = int(i*0.6)
-print(sixty_i)
+print(len(random_list))
 j=0;
-os.mkdir(training_dir)
 while j < sixty_i:
     fname_path = os.path.join(dirPath, random_list[j])
-    shutil.copy(fname_path, training_dir)
+    shutil.copy(fname_path, newSets)
     j+=1
 
-
-testing_dir = newSets + "_testing"
+os.chdir(curDir +'/testing')
+print(j)
+testDir = os.mkdir(newSets)
 j = int(sixty_i)
-
-os.mkdir(testing_dir)
+k=0
 while j < i:
     fname_path = os.path.join(dirPath, random_list[j])
-    shutil.copy(fname_path, testing_dir)
+    shutil.copy(fname_path, newSets)
     j+=1
-    
+    k+=1
+print(k)
+
