@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageOps
 import os
+import math
 
 def loadImage(filename, size):
   img = Image.open(filename)
@@ -89,7 +90,7 @@ def saveMatrix(matrix, patterns, block_size, species_code, dirname, out=os.getcw
 #byte_array = struct.pack('%sf' % len(file_bytes), *file_bytes)
 
   new_file = ''
-  filename = out + '/' + dirname + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
+  filename = out + '/' + species_code + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
   f = open(filename, 'wb')
   f.write(header)
   f.write(byte_array)
