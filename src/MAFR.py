@@ -4,6 +4,7 @@ import struct
 import numpy as np
 from PIL import Image
 from PIL import ImageOps
+import os
 
 def loadImage(filename, size):
   img = Image.open(filename)
