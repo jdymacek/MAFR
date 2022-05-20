@@ -49,6 +49,6 @@ for d in dirs:
     with open(outputPath, 'a') as f:
       f.write(f'{species}\t')
     imgPath = dPath + '/' + img
-    print(outputPath)
+#print(outputPath)
     os.system(f'python3 naiveclassifier.py -d {patternDir} -f {imgPath} -b {str(blockSize)} >> {outputPath}')
 
