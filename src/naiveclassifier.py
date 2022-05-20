@@ -21,16 +21,20 @@ img_matrix = MAFR.imageToMatrix(img, size)
 files = os.listdir(directory)
 
 errors = []
+file_list = []
 for f in files:
   if f.endswith('.nmf'):
     path = directory + '/' + f
     m = MAFR.loadMatrix(path)
     e = MAFR.computeError(img_matrix, m)
+    file_list += (f, e)
     s = MAFR.getSpecies(path)
     t = (e, s)
     errors.append(t)
 
-min_tuple = min(errors, key = lambda t: t[1])
+#file_list.sort(key=lambda y: y[1])
+#print(file_list)
+#print('\n\n')
 
-print(f'Winner is {min_tuple}')
-print(errors)
+errors.sort(key=lambda y: y[0])
+print(f'{errors[0][1]}\t{errors}')
