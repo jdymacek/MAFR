@@ -11,8 +11,8 @@ os.chdir(dirPath)
 for filename in file_list:
     if filename.endswith(".wav"):
        #print filename, now generate png
-       cmd = "sox " + filename + " -n spectrogram -X 256 -y 256 -l -m -r -o " + filename[:-3] + "png"
+       cmd = "sox " + filename + " -n spectrogram -X 512 -y 257 -m -r -o " + filename[:-3] + "png"
        os.system(cmd)
     else:
-	continue
+        continue
 
