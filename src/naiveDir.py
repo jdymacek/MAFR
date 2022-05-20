@@ -7,6 +7,7 @@ import MAFR
 import argparse
 import os
 import sys
+import datetime
 
 cwd = os.getcwd
 parser=argparse.ArgumentParser()
@@ -27,16 +28,27 @@ blockSize = int(args.b)
 outputDir = args.o
 
 dirs = os.listdir(testingDir)
+out = os.listdir(outputDir)
+
+num = 0
+outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.txt'
+while(1):
+  if os.path.exists(outputPath):
+    num += 1
+    outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.txt'
+  else:
+    break
+
 for d in dirs:
   dPath = testingDir + '/' + d
   pngs = os.listdir(dPath)
   species = dPath[-4:]
   print(species)
 
-  outputPath = outputDir + '/' + 'naive-' + species + '-' + str(blockSize) + '.txt'
-  with open(outputPath, 'w') as f:
-    f.write(f'{species}\t')
-    for img in pngs:
+  for img in pngs:
+    with open(outputPath, 'w') as f:
+      f.write(f'{species}\t')
       imgPath = dPath + '/' + img
+      print(outputPath)
       os.system(f'python3 naiveclassifier.py -d {patternDir} -f {imgPath} -b {str(blockSize)} >> {outputPath}')
 

@@ -27,14 +27,15 @@ for f in files:
     path = directory + '/' + f
     m = MAFR.loadMatrix(path)
     e = MAFR.computeError(img_matrix, m)
-    file_list += (f, e)
+#file_list += (f, e)
     s = MAFR.getSpecies(path)
-    t = (e, s)
+    t = (e, s, f)
     errors.append(t)
 
 #file_list.sort(key=lambda y: y[1])
-#print(file_list)
+#print(file_listi[0][0])
 #print('\n\n')
 
 errors.sort(key=lambda y: y[0])
 print(f'{errors[0][1]}\t{errors}')
+
