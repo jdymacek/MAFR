@@ -6,7 +6,10 @@ import shutil
 
 dirName = str(sys.argv[1])
 newSets =  str(sys.argv[2])
-#splitPercent = str(sys.argv[3])
+#still need to update the custom percentage split sets
+splitPercent = str(sys.argv[3])
+splitPercent = float(splitPercent)
+#the given one will be used for training
 
 filePath = os.path.abspath(__file__)
 dirPath = os.path.join(os.path.dirname(filePath), dirName)
@@ -26,6 +29,7 @@ os.chdir('training')
 random.shuffle(random_list)
 trainDir = os.mkdir(newSets)
 sixty_i = int(i*0.6)
+sixty_i = int(i*splitPercent)
 print(len(random_list))
 j=0;
 while j < sixty_i:
@@ -44,4 +48,5 @@ while j < i:
     j+=1
     k+=1
 print(k)
+
 
