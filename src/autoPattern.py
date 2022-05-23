@@ -50,10 +50,11 @@ for d in dirs:
       ml += [m]
 
     M = np.concatenate(ml)
+    print('Big M: ' + str(M.shape))
 
     #only keep pattern with the least average error
     print('Performing NMF')
-    estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000)
+    estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000, solver='mu')
     w = estim.fit_transform(M)
     h = estim.components_
     error = estim.reconstruction_err_
@@ -65,13 +66,14 @@ for d in dirs:
       path = dPath + '/' + i
       img = MAFR.loadImage(path, blockSize)
       original = MAFR.imageToMatrix(img, blockSize)
+#pinv = np.linalg.pinv(p)
       e = MAFR.computeError(original, p)
       total += e
-    avg = total / len(patterns)
+    avg = total / len(files)
     errors[idx] = avg
 
   lowest = min(errors, key=errors.get)
-#print(errors)
+  print(errors)
 #print(lowest)
   MAFR.saveMatrix(patterns[lowest], arg.p, arg.b, species, out=arg.o)
 

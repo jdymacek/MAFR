@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import sys
 import os
@@ -50,7 +52,7 @@ for filename in matrices:
         ml += [m]  
 M = np.concatenate(ml)
 
-estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000)
+estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000, solver='mu')
 w = estim.fit_transform(M)
 print(f'Iterations: {estim.n_iter_}')
 print(f'ERROR: {estim.reconstruction_err_}')

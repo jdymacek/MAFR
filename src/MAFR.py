@@ -6,12 +6,16 @@ from PIL import Image
 from PIL import ImageOps
 import os
 import math
+from datetime import datetime
 
 def loadImage(filename, size):
   img = Image.open(filename)
+  img = ImageOps.grayscale(img)
   x_n = img.width // size
   x_diff = (img.width % size) // 2
   y_n = img.height // size
+
+  print(img.getpixel((0,0)))
 
   return img.crop((x_diff, 0, (img.width - x_diff), img.height - (img.height % size)))
 
@@ -162,3 +166,10 @@ def getBlocksize(mat_file):
   size = f.read(2)
   return int.from_bytes(size, byteorder='little')
 
+def quickError(original, patterns, inv):
+  c = np.matmul(original, inv)
+  m_hat = np.matmul(c, patterns)
+  return np.linalg.norm(original-m_hat)
+
+#def getTimeStr():
+#return datetime.now().strftime(
