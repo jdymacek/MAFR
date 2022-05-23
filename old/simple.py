@@ -12,6 +12,11 @@ from sklearn import decomposition
 from skimage import color, io, img_as_ubyte
 
 
+def computeError(original, patterns):
+  inv = np.linalg.pinv(patterns)
+  c = np.matmul(original, inv)
+  m_hat = np.matmul(c, patterns)
+  return np.linalg.norm(original - m_hat)
 
 def imageToMatrix(image, size):
 	tiles = []
@@ -49,9 +54,10 @@ def matrixToImage(tiles, width, height):
 
 	return result 
 
-blockSize = 48
+t0 = time()
+blockSize = 16
 
-src_img = Image.open('spectrogram.png')
+src_img = Image.open('/scratch/prism2022data/training/AMRE/unit05-20150819003402_011372690_06947.png')
 src_img = ImageOps.grayscale(src_img)
 src_img = src_img.resize(((src_img.width//blockSize)*blockSize,(src_img.height//blockSize)*blockSize))
 print(src_img.size)
@@ -65,18 +71,21 @@ print(tile_matrix)
 #print('Samples: ' + str(n_samples))
 #print('Features: ' + str(n_features))
 
-n_components = 10
+n_components = 32
 
 print("EXTRACTING THE TOP %d %s..." % (n_components, 'Non-negative components - NMF'))
 #t0 = time()
-estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=4000)
+estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000, solver='mu')
 w = estim.fit_transform(tile_matrix)
 #train_time = (time() - t0)
 
 #print("Finished in %0.3fs" % train_time)
-print(f'ERROR: {estim.reconstruction_err_}')
 
 h = estim.components_
+
+e = computeError(tile_matrix, h) 
+print(f'ERROR: {e}')
+
 r_matrix = estim.inverse_transform(w)
 
 #print(recon)
@@ -90,3 +99,4 @@ pattern_img = matrixToImage(h,1, len(h))
 pattern_img.save("patterns.png")
 
 print(h)
+print(time() - t0)
