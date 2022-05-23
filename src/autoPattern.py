@@ -34,6 +34,8 @@ for d in dirs:
   print(species)
   dPath = arg.d + '/' + d
   files = os.listdir(dPath)
+  patterns = []
+  errors = {}
   for i in range(pps):
     print('Iter' + str(i + 1))
     pngs = [x for x in files if x.endswith('.png')]
@@ -49,9 +51,27 @@ for d in dirs:
 
     M = np.concatenate(ml)
 
+    #only keep pattern with the least average error
     print('Performing NMF')
     estim = decomposition.NMF(n_components=n_components, init='random', random_state=0, max_iter=10000)
     w = estim.fit_transform(M)
     h = estim.components_
-    MAFR.saveMatrix(h, arg.p, arg.b, species, out=arg.o)
+    error = estim.reconstruction_err_
+    patterns.append(h)
+
+  for idx, p in enumerate(patterns):
+    total = 0
+    for i in files:
+      path = dPath + '/' + i
+      img = MAFR.loadImage(path, blockSize)
+      original = MAFR.imageToMatrix(img, blockSize)
+      e = MAFR.computeError(original, p)
+      total += e
+    avg = total / len(patterns)
+    errors[idx] = avg
+
+  lowest = min(errors, key=errors.get)
+#print(errors)
+#print(lowest)
+  MAFR.saveMatrix(patterns[lowest], arg.p, arg.b, species, out=arg.o)
 
