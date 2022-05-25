@@ -1,3 +1,4 @@
+#splitSets.py -- This program splits up a directory of spectrograms into our training and testing sets
 import sys
 import array
 import random

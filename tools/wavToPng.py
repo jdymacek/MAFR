@@ -1,3 +1,4 @@
+#wavToPng.py -- This program converts all the .wav files in a directory into spectrograms using Sox
 import sys
 import os
 
