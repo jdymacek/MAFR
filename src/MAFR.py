@@ -15,7 +15,7 @@ def loadImage(filename, size):
   x_diff = (img.width % size) // 2
   y_n = img.height // size
 
-  print(img.getpixel((0,0)))
+  '''print(img.getpixel((0,0)))'''
 
   return img.crop((x_diff, 0, (img.width - x_diff), img.height - (img.height % size)))
 
@@ -173,3 +173,15 @@ def quickError(original, patterns, inv):
 
 #def getTimeStr():
 #return datetime.now().strftime(
+
+def closestDivisor(n):
+  divisors = []
+  for i in range(1, n+1):
+    if val % i == 0:
+      divisors += [i]
+
+  target = math.floor(math.sqrt(val))
+
+  for index, d in enumerate(divisors):
+    if d > target:
+      return divisors[index - 1]

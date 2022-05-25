@@ -48,7 +48,8 @@ for i in range(10000):
   elif val_2 < val_1:
       winners[k[1]] += 1
 
-min_key = (min(d, key=d.get))
-print(f'The winner is {min_key} : {winners[min_key]}')
-print(winners)
+min_key = (max(winners, key=winners.get))
+#sorted(winners.items(), key=lambda x: int(x[1]))
+#print(f'The winner is {min_key} : {winners[min_key]}')
+print(min_key)
 
