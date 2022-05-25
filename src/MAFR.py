@@ -177,10 +177,10 @@ def quickError(original, patterns, inv):
 def closestDivisor(n):
   divisors = []
   for i in range(1, n+1):
-    if val % i == 0:
+    if n % i == 0:
       divisors += [i]
 
-  target = math.floor(math.sqrt(val))
+  target = math.floor(math.sqrt(n))
 
   for index, d in enumerate(divisors):
     if d > target:
