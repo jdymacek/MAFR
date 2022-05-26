@@ -47,7 +47,7 @@ extractBlocks.py is a Python script that extracts selected blocks from the train
     <directory of .png files> is the directory containing the .png files to be processed.
     <.txt file with annotations> is the .txt file that contains the desired blocks.
 
-### lines.html and blocKPicker.js
+### lines.html and blockPicker.js
 
 lines.html and blockPicker.js make up a web application that allows the user to select blocks from each file in the training set. To use the application, you load in your dataset into the blockPicker.js 'files' array, and then open the lines.html file in your browser. Once there, you can select blocks by clicking on the image, which will populate the file's name and the selected blocks into the text area. You can copy the text area to the clipboard, and then paste it into a textfile to save your annotations.
 
