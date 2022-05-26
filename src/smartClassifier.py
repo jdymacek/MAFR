@@ -45,13 +45,12 @@ def trainingError(curated, trainingPath):
 
 	
   
-        errors.sort(key=operator.itemgetter(1))
+            errors.sort(key=operator.itemgetter(1))
 
-        if errors[0][0] == d:
-            correct += 1
-        total += 1
-
-        
+            if errors[0][0] == d:
+                correct += 1
+            total += 1
+	
     print(f'{correct} right out of {total}')
     print(f'{correct/total} percent')
     print(f'TIME: {time.time() - t0}')
@@ -82,9 +81,10 @@ for p in patterns:
         else:
             speciesDict[s].append(t)
 
-curated = {}
-
-for key in speciesDict:
+for i in range(30):
+  curated = {}
+  for key in speciesDict:
     curated[key] = speciesDict[key][np.random.randint(len(speciesDict[key]))]
 
-trainingError(curated, trainingDir)
+  e = trainingError(curated, trainingDir)
+  print(f'correct on iteration {i}: {e}')
