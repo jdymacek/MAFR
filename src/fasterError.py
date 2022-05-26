@@ -12,8 +12,8 @@ parser.add_argument('-d', '--directory', help='Path to .nmf files', required=Tru
 
 args = parser.parse_args()
 
-directory = args.d
-trainingDir = args.t
+directory = args.directory
+trainingDir = args.training
 
 patterns = os.listdir(directory)
 speciesDict = {}
@@ -37,7 +37,6 @@ for p in patterns:
 speciesDirs = os.listdir(trainingDir)
 correct =  0
 total = 0
-errors = []
 
 '''
 for p in patterns:
@@ -66,8 +65,10 @@ for p in patterns:
     print(f'{correct/total} percent')
 '''
 
+temp = {}
 for k, v in speciesDict.items():
     for p in v:
+        errors = []
         for d in speciesDirs:
             path = trainingDir + '/' + d
             images = os.listdir(path)
@@ -78,11 +79,5 @@ for k, v in speciesDict.items():
                     error = MAFR.quickError(original, p[0], p[1])
                     errors.append((k, error, p[3]))
 
-        errors.sort(key=operator.itemgetter(1))
-        
-        if errors[0][0] == k:
-            correct += 1
-        total += 1
+        temp[p[3]] = errors
 
-print(f'{correct} right out of {total}')
-print(f'{correct/total} percent')
