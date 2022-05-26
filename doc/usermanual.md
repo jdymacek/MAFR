@@ -42,10 +42,12 @@ wavToPng.py is a Python script that converts .wav files to .png files. Usage is 
 
 extractBlocks.py is a Python script that extracts selected blocks from the training set. extractBlocks uses the PIL and numpy libraries and usage is as follows:
 
-    `python3 extractBlocks.py <directory of .png files> <.txt file with annotations>'
+    `python3 extractBlocks.py <directory of .png files> <.txt file with annotations> <specific class of annoated blocks> <number of blocks>'
             
     <directory of .png files> is the directory containing the .png files to be processed.
     <.txt file with annotations> is the .txt file that contains the desired blocks.
+    <specific class of annoated blocks> is the class of what annotated blocks should be extracted
+    <number of blocks> is the number of blocks to be extracted
 
 ### lines.html and blockPicker.js
 
