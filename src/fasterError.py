@@ -29,7 +29,7 @@ for p in patterns:
         s = MAFR.getSpecies(path)
         idVal = s + '-' + idNum
         t = (m, pInv, s, filename, [])
-	if s not in speciesDict:
+        if s not in speciesDict:
             speciesDict[s] = [t]
         else:
             speciesDict[s].append(t)
@@ -65,7 +65,7 @@ for p in patterns:
     print(f'{correct/total} percent')
 '''
 
-temp = {}
+errors = {}
 for k, v in speciesDict.items():
     for p in v:
         for d in speciesDirs:
@@ -76,6 +76,10 @@ for k, v in speciesDict.items():
                     img = MAFR.loadImage(path + '/' + i, 16)
                     original = MAFR.imageToMatrix(img, 16)
                     error = MAFR.quickError(original, p[0], p[1])
-		    p[4].append(error)
+                    p[4].append(error)
+                    temp = {p[3]: error}
+                    imgKey = d + '/' + i
+                    errors[imgKey] += temp
+            
                  
 
