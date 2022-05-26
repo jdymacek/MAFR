@@ -71,8 +71,8 @@ for d in dirs:
       total += e
     avg = total / len(files)
     errors[idx] = avg
-  for i in range(4):
-    lowest = min(errors, key=errors.get)
-    MAFR.saveMatrix(patterns[lowest], arg.p, arg.b, species, out=arg.o)
-    errors.pop(lowest)
+#for i in range(4):
+#lowest = min(errors, key=errors.get)
+    MAFR.saveMatrix(h, arg.p, arg.b, species, out=arg.o)
+#errors.pop(lowest)
 

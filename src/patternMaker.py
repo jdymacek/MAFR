@@ -39,9 +39,9 @@ img_num = int(arg.n)
 ml = []
 file_list = os.listdir(arg.d)
 
-matrices = random.sample(file_list, img_num)
+#matrices = random.sample(file_list, img_num)
 
-for filename in matrices:
+for filename in file_list:
      if filename.endswith(".png"):
         #looking for the patterns in each png file
         fname_path = arg.d + '/' + filename

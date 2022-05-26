@@ -28,8 +28,8 @@ for p in patterns:
         pInv = np.linalg.pinv(m)
         s = MAFR.getSpecies(path)
         idVal = s + '-' + idNum
-        t = (m, pInv, s, filename)
-        if s not in speciesDict:
+        t = (m, pInv, s, filename, [])
+	if s not in speciesDict:
             speciesDict[s] = [t]
         else:
             speciesDict[s].append(t)
@@ -68,7 +68,6 @@ for p in patterns:
 temp = {}
 for k, v in speciesDict.items():
     for p in v:
-        errors = []
         for d in speciesDirs:
             path = trainingDir + '/' + d
             images = os.listdir(path)
@@ -77,7 +76,6 @@ for k, v in speciesDict.items():
                     img = MAFR.loadImage(path + '/' + i, 16)
                     original = MAFR.imageToMatrix(img, 16)
                     error = MAFR.quickError(original, p[0], p[1])
-                    errors.append((k, error, p[3]))
-
-        temp[p[3]] = errors
+		    p[4].append(error)
+                 
 
