@@ -8,8 +8,8 @@ from MAFR import imageToMatrix, matrixToImage, loadImage, closestDivisor
 from PIL import Image
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-d', metavar = 'input_directory', help='directory where pngs are located')
-parser.add_argument('-t', metavar = '.txt file', help = 'file that has all the blocks containing pngs with their retrospective png')
+parser.add_argument('-d', metavar = 'input_directory', required = True, help='directory where pngs are located')
+parser.add_argument('-t', metavar = '.txt file', required = True, help = 'file that has all the blocks containing pngs with their retrospective png')
 parser.add_argument('-c', metavar = 'class', help = 'class for creating big annotate block images')
 parser.add_argument('-n', metavar = 'number of blocks', help = 'number of blocks to be pulled from directory')
 args = parser.parse_args()
@@ -37,7 +37,7 @@ paddedImg.save("randomBigBlock.png")
 
 
 
-#annoatated blocks into one image
+#specific amount of annoatated blocks into one image
 allAnn = []
 with open(args.t) as temp_f:
   datafile = temp_f.readlines()
@@ -49,8 +49,9 @@ for line in datafile:
       classCount+=1
       classList.append(line)
 
-if classCount< int(args.n):
+while len(classList) < int(args.n):
    classList = classList+classList
+   print(len(classList))
 
 loopVar =0
 while loopVar < int(args.n):
@@ -71,13 +72,13 @@ h = closestDivisor(len(allAnn))
 w = len(allAnn)//h
 print(w, h)
 bigImg = matrixToImage(allAnn, w, h)
-bigImg.save("bigAnnoatedBlock.png")
+bigImg.save(args.c "_bigAnnoatedBlock.png")
 #end
 
 
 
 
-#extract blocks from images
+#extract all annoated blocks from class
 file_list = os.listdir(args.d)
 M = []
 for filename in file_list:
@@ -85,7 +86,6 @@ for filename in file_list:
         datafile = temp_f.readlines()
     for line in datafile:
         if filename in line:
-#print(filename)
            lineParsed = line.split()
            i=1
            while i < len(lineParsed):
@@ -98,16 +98,11 @@ for filename in file_list:
                  
                  #now with the block, find the part of the matrix that matches
                  row = matImg[theBlock]
-#print(row)
                  i += 1
                  M += [row]
-                 #maybe add it here to add in randomly sampled blocks to put in
-
-             
                  
 
 h = closestDivisor(len(M))
 w = len(M)//h
 bigImg = matrixToImage(M, w, h)
-#print(len(M))
-bigImg.save("allBlockSignals.png")
+bigImg.save("annotatedDir/" + args.c + "/" + args.c + "_allBlockSignals.png")
