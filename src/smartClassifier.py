@@ -44,7 +44,7 @@ for p in patterns:
         else:
             speciesDict[s].append(t)
 
-t0 = time()
+t0 = time.time()
 curated = {}
 
 for key in speciesDict:
@@ -53,13 +53,16 @@ for key in speciesDict:
 training = os.listdir(trainingDir)
 
 errors = []
+correct = 0
+total = 0
+
 for d in training:
     path = trainingDir + '/' + d
     images = os.listdir(path)
     for i in images:
         if i.endswith('.png'):
-            img = MAFR.loadImage(path + '/' + i)
-            original = MAFR.imageToMatrix(img)
+            img = MAFR.loadImage(path + '/' + i, 16)
+            original = MAFR.imageToMatrix(img, 16)
             for key in curated:
                 m = curated[key][0]
                 pInv = curated[key][1]
@@ -67,7 +70,17 @@ for d in training:
                 error = MAFR.quickError(original, m, pInv)
                 errors.append((s, error))
 
-errors.sort(key=operator.itemgetter(1))
-print(errors[0][0])
-print(f'TIME: {time() - t0}')
+	
+  
+        errors.sort(key=operator.itemgetter(1))
+
+        if errors[0][0] == d:
+            correct += 1
+        total += 1
+
+print(f'{correct} right out of {total}')
+print(f'{correct/total} percent')
+print(f'TIME: {time.time() - t0}')
+
+
     
