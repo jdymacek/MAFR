@@ -6,6 +6,8 @@ import argparse
 def combine(pathA, pathB):
     matrixA = MAFR.loadMatrix(pathA)
     matrixB = MAFR.loadMatrix(pathB)
+    print(matrixA.shape)
+    print(matrixB.shape)
     return np.concatenate((matrixA, matrixB), axis=0)
 
 
@@ -18,8 +20,7 @@ parser.add_argument('-a', metavar=pathA, type=str, help='Path to first pattern m
 parser.add_argument('-b', metavar=pathB, type=str, help='Path to second pattern matrix.')
 parser.add_argument('-o', metavar='output', type=str, help='Path to output file.')
 
-print(pathA.shape)
-print(pathB.shape)
+
 
 combined = combine(pathA, pathB)
 print(combined.shape)
