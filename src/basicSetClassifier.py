@@ -44,7 +44,7 @@ for pat in patterns:
 		img = MAFR.loadImage(trainingDir + imgFile, 16)
 		org = MAFR.imageToMatrix(img, 16)
 		#err = MAFR.quickError(org,mat,inv)
-		errorValues[imgFile][pat] = (err,sps)
+                #errorValues[imgFile][pat] = (err,sps)
 print(f'Time to open files: {time.time() - t0}')
 
 best = 0

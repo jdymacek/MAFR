@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description='Combine two pattern matrices.')
 parser.add_argument('-a', type=str, help='Path to first pattern matrix.')
 parser.add_argument('-b', type=str, help='Path to second pattern matrix.')
 parser.add_argument('-o', type=str, help='Path to output file.')
+#parser.add_argument('-s', type=str, help = 'Species Code')
 
 args = parser.parse_args()
 
