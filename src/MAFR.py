@@ -110,6 +110,45 @@ def saveMatrix(matrix, patterns, block_size, species_code, out=os.getcwd()):
   f.write(byte_array)
   f.close()
 
+### matrixList = list of original .nmf pattern files 
+def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
+    sig = 'NMF{'
+    sigFirst = merge_chars(sig[1], sig[0])
+    sigSecond = merge_chars(sig[3], sig[2])
+
+    header = np.ndarray(8,dtype=np.uint16)
+    header[0] = sigFirst
+    header[1] = sigSecond
+    header[2] = 2049
+    header[3] = patterns
+    header[4] = blockSize
+    header[5] = 0
+    header[6] = 0
+    header[7] = 0
+
+
+    numSpecies = len(matrix) // patterns
+    speciesBytes = numSpecies * 4
+    indexBytes = 0
+    if speciesBytes % 16 != 0:
+        diff = 16 - speciesBytes % 16)
+        indexBytes = speciesBytes + diff
+
+    index = np.ndarray(indexBytes, dtype=np.unit16)
+    bytesRemaining = indexBytes
+    ml = []
+    for m in matrixList:
+        s = getSpecies(m)
+        matrix = loadMatrix(m)
+        ml += [matrix]
+        sFirst = s[0] + s[1]
+        sLast = s[2] + s[3]
+        np.append(index, sFirst)
+        np.append(index, sLast)
+        bytesRemaining -= 4
+
+    M = np.concatenate(ml)
+
 
 def loadMatrix(mat_file):
   f = open(mat_file, 'rb')
