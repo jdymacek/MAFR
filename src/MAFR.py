@@ -185,3 +185,9 @@ def closestDivisor(n):
   for index, d in enumerate(divisors):
     if d > target:
       return divisors[index - 1]
+
+def getPatterns(mat_file):
+  f = open(mat_file, 'rb')
+  prev = f.read(6)
+  size = f.read(2)
+  return int.from_bytes(size, byteorder='little')
