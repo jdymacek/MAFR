@@ -3,6 +3,7 @@ import random
 import argparse
 import numpy as np
 import os
+import time
 
 parser = argparse.ArgumentParser(description='Faster Error Computation')
 parser.add_argument('-t', '--training', help='Path to training images', required=True)
@@ -28,6 +29,7 @@ for d in dirs:
 species = {}
 #Error values for all files for all patterns
 errorValues = {k:{} for k in trainingFiles}
+t0 = time.time()
 for pat in patterns:
 	print(pat)
 	mat = MAFR.loadMatrix(directory + pat)
@@ -41,8 +43,9 @@ for pat in patterns:
 	for imgFile in trainingFiles:
 		img = MAFR.loadImage(trainingDir + imgFile, 16)
 		org = MAFR.imageToMatrix(img, 16)
-		err = MAFR.quickError(org,mat,inv)
+		#err = MAFR.quickError(org,mat,inv)
 		errorValues[imgFile][pat] = (err,sps)
+print(f'Time to open files: {time.time() - t0}')
 
 best = 0
 for i in range(5000):
