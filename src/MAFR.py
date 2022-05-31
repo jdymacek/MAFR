@@ -127,7 +127,7 @@ def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
     header[7] = 0
 
 
-    numSpecies = len(matrix) // patterns
+    numSpecies = len(matrixList)
     speciesBytes = numSpecies * 4
     indexBytes = 0
     if speciesBytes % 16 != 0:
@@ -135,17 +135,17 @@ def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
         indexBytes = speciesBytes + diff
 
     index = np.ndarray(indexBytes, dtype=np.unit16)
-    bytesRemaining = indexBytes
     ml = []
+    i = 0
     for m in matrixList:
         s = getSpecies(m)
         matrix = loadMatrix(m)
         ml += [matrix]
         sFirst = merge_chars(s[1], s[0])
         sLast = merge_chars(s[3], s[4])
-        np.append(index, sFirst)
-        np.append(index, sLast)
-        bytesRemaining -= 4
+        index[i] = sFirst
+        index[i+1] = sLast
+        i += 2
 
     M = np.concatenate(ml)
 
