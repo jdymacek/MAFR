@@ -121,7 +121,7 @@ HEADER FORMAT:
     2 byte number of entries
 '''
 def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
-    sig = 'NMF{'
+    sig = 'NMFC'
     sigFirst = merge_chars(sig[1], sig[0])
     sigSecond = merge_chars(sig[3], sig[2])
 
@@ -194,7 +194,7 @@ def loadMatrix(mat_file):
       matrix = a.reshape(pat, wid*ht)
       return matrix
 
-  elif sig.decode("utf-8") == "NMF{":
+  elif sig.decode("utf-8") == "NMFC":
       ver = f.read(1)
       bpe = f.read(1)
       patterns = f.read(2)
@@ -202,16 +202,31 @@ def loadMatrix(mat_file):
       entries = f.read(2)
       junk = f.read(4)
 
-      entries = int.from_bytes(entries, byteorder='little')
+      p = int.from_bytes(patterns, byteorder='little')
+      b = int.from_bytes(blockSize, byteorder='little')
+      e = int.from_bytes(entries, byteorder='little')
 
       index = []
-      for i in range(entries):
+      for i in range(e):
           code = f.read(4)
-          index.append(code)
+          codeString = code.decode("utf-8")
+          index.append(codeString)
 
-      print(index)
-      print(type(index[0]))
-      print(len(index))
+      data = {}
+      for idx, species in enumerate(index):
+        byte_arr = f.read(p * ((b * b) * 8))
+        a = np.frombuffer(byte_arr, dtype=np.double)
+        matrix = a.reshape(p, b*b)
+        if species not in data:
+          data[species] = [matrix]
+        else:
+          data[species] += [matrix]
+
+      print(data)
+
+
+
+      
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
