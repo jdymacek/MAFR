@@ -127,7 +127,7 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     header[7] = 0
 
     d = os.listdir(matrixPath)
-    files = [f for f in d if d.endswith('.nmf')]
+    files = [f for f in d if f.endswith('.nmf')]
 
     numSpecies = len(files)
     speciesBytes = numSpecies * 4
