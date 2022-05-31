@@ -131,7 +131,7 @@ def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
     speciesBytes = numSpecies * 4
     indexBytes = 0
     if speciesBytes % 16 != 0:
-        diff = 16 - speciesBytes % 16)
+        diff = 16 - (speciesBytes % 16)
         indexBytes = speciesBytes + diff
 
     index = np.ndarray(indexBytes, dtype=np.unit16)
