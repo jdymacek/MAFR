@@ -111,6 +111,15 @@ def saveMatrix(matrix, patterns, block_size, species_code, out=os.getcwd()):
   f.close()
 
 ### matrixList = list of original .nmf pattern files 
+'''
+HEADER FORMAT:
+    4 byte signature ('NMF{')
+    1 byte version
+    1 byte bytesPerEntry
+    2 byte number of patterns
+    2 byte blockSize
+    2 byte number of entries
+'''
 def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     sig = 'NMF{'
     sigFirst = merge_chars(sig[1], sig[0])
@@ -122,14 +131,13 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     header[2] = 2049
     header[3] = patterns
     header[4] = blockSize
-    header[5] = 0
     header[6] = 0
     header[7] = 0
 
     d = os.listdir(matrixPath)
     files = [f for f in d if f.endswith('.nmf')]
-
     numSpecies = len(files)
+    header[5] = numSpecies
     indexBytes = numSpecies * 4
     if indexBytes % 16 != 0:
         diff = 16 - (indexBytes % 16)
@@ -142,12 +150,10 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     for m in files:
       path = matrixPath + m
       s = getSpecies(path)
-      print("<<" + s + ">>")
       matrix = loadMatrix(path)
       ml += [matrix]
       sFirst = merge_chars(s[1], s[0])
       sLast = merge_chars(s[3], s[2])
-      print(sFirst)
       index[i] = sFirst
       index[i+1] = sLast
       i += 2
@@ -170,36 +176,38 @@ def loadMatrix(mat_file):
 
 #sig, ver, bpe, pat, b_height, b_width, junk = bytearray()
   sig = f.read(4)
-  if 
-#print(sig)
-  ver = f.read(1)
-# print(ver)
-  bpe = f.read(1)
-# print(bpe)
-  patterns = f.read(2)
-# print(patterns)
-  height = f.read(2)
-#  print(height)
-  width = f.read(2)
-#  print(width)
-  code = f.read(4)
-#  print(code)
+  if sig.decode("utf-8") == "NMFP":
+      ver = f.read(1)
+      bpe = f.read(1)
+      patterns = f.read(2)
+      height = f.read(2)
+      width = f.read(2)
+      code = f.read(4)
 
-  pat = int.from_bytes(patterns, byteorder='little')
-  wid = int.from_bytes(width, byteorder='little')
-  ht = int.from_bytes(height, byteorder='little')
-  byte = int.from_bytes(bpe, byteorder='little')
-#print(pat)
-#print(wid)
-#print(ht)
-#print(byte)
+      pat = int.from_bytes(patterns, byteorder='little')
+      wid = int.from_bytes(width, byteorder='little')
+      ht = int.from_bytes(height, byteorder='little')
+      byte = int.from_bytes(bpe, byteorder='little')
 
-  byte_arr = f.read()
-#print(len(byte_arr))
-  a = np.frombuffer(byte_arr, dtype=np.double)
-  matrix = a.reshape(pat, wid*ht)
+      byte_arr = f.read()
+      a = np.frombuffer(byte_arr, dtype=np.double)
+      matrix = a.reshape(pat, wid*ht)
+      return matrix
 
-  return matrix
+  elif sig.decode("utf-8") == "NMF{":
+      ver = f.read(1)
+      bpe = f.read(1)
+      patterns = f.read(2)
+      blockSize = f.read(2)
+      entries = f.read(2)
+      junk = f.read(4)
+
+      index = []
+      for i in range(entries):
+          code = f.read(4)
+          index.append(code)
+
+      print(index)
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
