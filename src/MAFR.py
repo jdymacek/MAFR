@@ -149,6 +149,15 @@ def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
 
     M = np.concatenate(ml)
 
+    data = M.tobytes()
+    now = datetime.now()
+    dt = now.strftime('%m/%d/%y-%H:%M:%S')
+
+    filename = dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmfm"
+    f = open(filename, "wb")
+    f.write(header)
+    f.write(index)
+    f.write(data)
 
 def loadMatrix(mat_file):
   f = open(mat_file, 'rb')
