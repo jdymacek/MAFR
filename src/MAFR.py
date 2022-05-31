@@ -202,6 +202,8 @@ def loadMatrix(mat_file):
       entries = f.read(2)
       junk = f.read(4)
 
+      entries = int.from_bytes(entries, byteorder='little')
+
       index = []
       for i in range(entries):
           code = f.read(4)
