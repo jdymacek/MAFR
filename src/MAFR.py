@@ -210,6 +210,8 @@ def loadMatrix(mat_file):
           index.append(code)
 
       print(index)
+      print(type(index[0]))
+      print(len(index))
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
