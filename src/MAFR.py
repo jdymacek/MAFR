@@ -141,8 +141,8 @@ def saveNewFormat(matrixList, patterns, blockSize, out=os.getcwd()):
         s = getSpecies(m)
         matrix = loadMatrix(m)
         ml += [matrix]
-        sFirst = s[0] + s[1]
-        sLast = s[2] + s[3]
+        sFirst = merge_chars(s[1], s[0])
+        sLast = merge_chars(s[3], s[4])
         np.append(index, sFirst)
         np.append(index, sLast)
         bytesRemaining -= 4
