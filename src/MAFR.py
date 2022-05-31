@@ -130,42 +130,47 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     files = [f for f in d if f.endswith('.nmf')]
 
     numSpecies = len(files)
-    speciesBytes = numSpecies * 4
-    indexBytes = 0
-    if speciesBytes % 16 != 0:
-        diff = 16 - (speciesBytes % 16)
-        indexBytes = speciesBytes + diff
+    indexBytes = numSpecies * 4
+    if indexBytes % 16 != 0:
+        diff = 16 - (indexBytes % 16)
+        indexBytes = indexBytes + diff
+    print(indexBytes)
 
     index = np.ndarray(indexBytes, dtype=np.uint16)
     ml = []
     i = 0
     for m in files:
-        s = getSpecies(m)
-        matrix = loadMatrix(m)
-        ml += [matrix]
-        sFirst = merge_chars(s[1], s[0])
-        sLast = merge_chars(s[3], s[4])
-        index[i] = sFirst
-        index[i+1] = sLast
-        i += 2
+      path = matrixPath + m
+      s = getSpecies(path)
+      print("<<" + s + ">>")
+      matrix = loadMatrix(path)
+      ml += [matrix]
+      sFirst = merge_chars(s[1], s[0])
+      sLast = merge_chars(s[3], s[2])
+      print(sFirst)
+      index[i] = sFirst
+      index[i+1] = sLast
+      i += 2
 
     M = np.concatenate(ml)
 
     data = M.tobytes()
     now = datetime.now()
-    dt = now.strftime('%m/%d/%y-%H:%M:%S')
+    dt = now.strftime('%m-%d-%y-%H:%M:%S')
 
-    filename = dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmfm"
+    filename = out + "/" + dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmf"
     f = open(filename, "wb")
     f.write(header)
     f.write(index)
     f.write(data)
+    f.close()
 
 def loadMatrix(mat_file):
   f = open(mat_file, 'rb')
 
 #sig, ver, bpe, pat, b_height, b_width, junk = bytearray()
   sig = f.read(4)
+  if 
 #print(sig)
   ver = f.read(1)
 # print(ver)
