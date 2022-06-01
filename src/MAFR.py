@@ -146,13 +146,13 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
         path = matrixPath + f
         m = loadMatrix(path)
         for row in m:
-            print(len(row))
             species = getSpecies(path)
             indexList.append(species)
-        print(m.shape)
         ml += [m]
 
     M = np.concatenate(ml)
+
+    print("FROM SAVE:\n" + str(M))
     data = M.tobytes()
 
     patterns = len(indexList)
@@ -189,8 +189,6 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
 
     now = datetime.now()
     dt = now.strftime('%m-%d-%y-%H:%M:%S')
-    print(type(dt))
-    print(type(out))
 
     filename = out + "/" + dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmf"
     f = open(filename, "wb")
@@ -220,6 +218,7 @@ def loadMatrix(mat_file):
       byte_arr = f.read()
       a = np.frombuffer(byte_arr, dtype=np.double)
       matrix = a.reshape(pat, wid*ht)
+      f.close()
       return matrix
 
   elif sig.decode("utf-8") == "NMFC":
@@ -231,6 +230,7 @@ def loadMatrix(mat_file):
 
       p = int.from_bytes(patterns, byteorder='little')
       b = int.from_bytes(blockSize, byteorder='little')
+      bpe = int.from_bytes(bpe, byteorder='little')
 
       index = []
       for i in range(p):
@@ -238,12 +238,23 @@ def loadMatrix(mat_file):
           codeString = code.decode("utf-8")
           index.append(codeString)
 
-      byte_arr = bytearray()
-      for e in index:
-        byte_arr += f.read((b*b) * 8)
+      pos = f.tell()
+      print("FILE POINTER AT: " + str(pos))
+
+      #byte_arr = f.read(p*((b*b) * 8))
+      byte_arr = f.read()
+      pos = f.tell()
+      print("FILE POINTER AT: " + str(pos))
+
       a = np.frombuffer(byte_arr, dtype=np.double)
       data = a.reshape(p, b*b)
-      
+      '''
+      byte_arr = bytearray()
+      for e in index:
+        byte_arr += f.read((b*b) * bpe)
+      a = np.frombuffer(byte_arr, dtype=np.double)
+      data = a.reshape(p, b*b)
+      '''
       '''
       for idx, species in enumerate(index):
         byte_arr = f.read(p * ((b * b) * 8))
@@ -255,9 +266,10 @@ def loadMatrix(mat_file):
           data[species] += [matrix]
       '''
 
-      print(data)
+      pos = f.tell()
+      print("FILE POINTER AT: " + str(pos))
+      f.close()
       return (data, index)
-
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
