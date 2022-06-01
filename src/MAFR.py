@@ -120,7 +120,7 @@ HEADER FORMAT:
     2 byte blockSize
     2 byte number of entries
 '''
-def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
+def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
     sig = 'NMFC'
     sigFirst = merge_chars(sig[1], sig[0])
     sigSecond = merge_chars(sig[3], sig[2])
@@ -129,24 +129,46 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
     header[0] = sigFirst
     header[1] = sigSecond
     header[2] = 2049
-    header[3] = patterns
+    #header[3] = patterns
     header[4] = blockSize
+    header[5] = 0
     header[6] = 0
     header[7] = 0
 
     d = os.listdir(matrixPath)
     files = [f for f in d if f.endswith('.nmf')]
-    numSpecies = len(files)
-    header[5] = numSpecies
-    indexBytes = numSpecies * 4
+
+    ml = []
+    indexList = []
+    for f in files:
+        path = matrixPath + m
+        m = MAFR.loadMatrix(path)
+        for row in m:
+            species = MAFR.getSpecies(path)
+            indexList.append(species)
+        ml += [m]
+
+    M = np.concatenate(ml)
+    data = M.tobytes()
+
+    header[3] = len(indexList)
+    indexBytes = len(indexList) * 4
+
     if indexBytes % 16 != 0:
         diff = 16 - (indexBytes % 16)
         indexBytes = indexBytes + diff
     print(indexBytes)
 
     index = np.ndarray(indexBytes, dtype=np.uint16)
-    ml = []
     i = 0
+    for e in indexList:
+        sFirst = merge_chars(e[1], e[0])
+        sLast = merge_chars(e[3], e[2])
+        index[i] = sFirst
+        index[i+1] = sLast
+        i += 2
+        
+    '''
     for m in files:
       path = matrixPath + m
       s = getSpecies(path)
@@ -157,10 +179,9 @@ def saveNewFormat(matrixPath, patterns, blockSize, out=os.getcwd()):
       index[i] = sFirst
       index[i+1] = sLast
       i += 2
+    '''
 
-    M = np.concatenate(ml)
 
-    data = M.tobytes()
     now = datetime.now()
     dt = now.strftime('%m-%d-%y-%H:%M:%S')
 
@@ -199,20 +220,22 @@ def loadMatrix(mat_file):
       bpe = f.read(1)
       patterns = f.read(2)
       blockSize = f.read(2)
-      entries = f.read(2)
-      junk = f.read(4)
+      junk = f.read(6)
 
       p = int.from_bytes(patterns, byteorder='little')
       b = int.from_bytes(blockSize, byteorder='little')
-      e = int.from_bytes(entries, byteorder='little')
 
       index = []
-      for i in range(e):
+      for i in range(p):
           code = f.read(4)
           codeString = code.decode("utf-8")
           index.append(codeString)
 
-      data = {}
+      byte_arr = f.read()
+      a = np.frombuffer(byte_arr, dtype=np.double)
+      data = a.reshape(pat, b*b)
+      
+      '''
       for idx, species in enumerate(index):
         byte_arr = f.read(p * ((b * b) * 8))
         a = np.frombuffer(byte_arr, dtype=np.double)
@@ -221,13 +244,11 @@ def loadMatrix(mat_file):
           data[species] = [matrix]
         else:
           data[species] += [matrix]
+      '''
 
       print(data)
-      return data
+      return (data, index)
 
-
-
-      
 
 def computeError(original, patterns):
   inv = np.linalg.pinv(patterns)
