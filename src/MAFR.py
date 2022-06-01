@@ -137,22 +137,27 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
 
     d = os.listdir(matrixPath)
     files = [f for f in d if f.endswith('.nmf')]
+    files.sort()
+    print(files)
 
     ml = []
     indexList = []
     for f in files:
-        path = matrixPath + m
-        m = MAFR.loadMatrix(path)
+        path = matrixPath + f
+        m = loadMatrix(path)
         for row in m:
-            species = MAFR.getSpecies(path)
+            print(len(row))
+            species = getSpecies(path)
             indexList.append(species)
+        print(m.shape)
         ml += [m]
 
     M = np.concatenate(ml)
     data = M.tobytes()
 
-    header[3] = len(indexList)
-    indexBytes = len(indexList) * 4
+    patterns = len(indexList)
+    header[3] = patterns
+    indexBytes = patterns * 4
 
     if indexBytes % 16 != 0:
         diff = 16 - (indexBytes % 16)
@@ -184,6 +189,8 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
 
     now = datetime.now()
     dt = now.strftime('%m-%d-%y-%H:%M:%S')
+    print(type(dt))
+    print(type(out))
 
     filename = out + "/" + dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmf"
     f = open(filename, "wb")
@@ -231,9 +238,11 @@ def loadMatrix(mat_file):
           codeString = code.decode("utf-8")
           index.append(codeString)
 
-      byte_arr = f.read()
+      byte_arr = bytearray()
+      for e in index:
+        byte_arr += f.read((b*b) * 8)
       a = np.frombuffer(byte_arr, dtype=np.double)
-      data = a.reshape(pat, b*b)
+      data = a.reshape(p, b*b)
       
       '''
       for idx, species in enumerate(index):
