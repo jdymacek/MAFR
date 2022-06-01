@@ -223,6 +223,7 @@ def loadMatrix(mat_file):
           data[species] += [matrix]
 
       print(data)
+      return data
 
 
 
