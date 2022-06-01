@@ -144,11 +144,9 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
     indexList = []
     for f in files:
         path = matrixPath + f
-        m = loadMatrix(path)
-        for row in m:
-            species = getSpecies(path)
-            indexList.append(species)
-        ml += [m]
+        matrix, labels = loadMatrix(path)
+        indexList += labels
+        ml += [matrix]
 
     M = np.concatenate(ml)
 
@@ -157,12 +155,7 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
 
     patterns = len(indexList)
     header[3] = patterns
-    indexBytes = patterns * 4
-
-    if indexBytes % 16 != 0:
-        diff = 16 - (indexBytes % 16)
-        indexBytes = indexBytes + diff
-    print(indexBytes)
+    indexBytes = patterns * 2
 
     index = np.ndarray(indexBytes, dtype=np.uint16)
     i = 0
@@ -218,8 +211,12 @@ def loadMatrix(mat_file):
       byte_arr = f.read()
       a = np.frombuffer(byte_arr, dtype=np.double)
       matrix = a.reshape(pat, wid*ht)
-      f.close()
-      return matrix
+
+      rowLabels = []
+      for i in range(pat):
+        rowLabels.append(code.decode("utf-8"))
+
+      return (matrix, rowLabels)
 
   elif sig.decode("utf-8") == "NMFC":
       ver = f.read(1)
@@ -241,7 +238,7 @@ def loadMatrix(mat_file):
       pos = f.tell()
       print("FILE POINTER AT: " + str(pos))
 
-      #byte_arr = f.read(p*((b*b) * 8))
+      #byte_arr = f.read(p*((b*b) * bpe))
       byte_arr = f.read()
       pos = f.tell()
       print("FILE POINTER AT: " + str(pos))
@@ -268,7 +265,6 @@ def loadMatrix(mat_file):
 
       pos = f.tell()
       print("FILE POINTER AT: " + str(pos))
-      f.close()
       return (data, index)
 
 def computeError(original, patterns):
