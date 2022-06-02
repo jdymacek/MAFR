@@ -7,6 +7,7 @@ from PIL import ImageOps
 import os
 import math
 from datetime import datetime
+from sklearn import decomposition
 
 def loadImage(filename, size):
   img = Image.open(filename)
@@ -292,8 +293,7 @@ def errorFromFiles(fileList, pattern):
   custom = decomposition.NMF(n_components=len(pattern), init="random", random_state=0, max_iter=10000,
       solver="mu")
 
-  img = loadImage(fileList[0], 16)
-  m = imageToMatrix(img, 16)
+  m = imageToMatrix(fileList[0], 16)
   custom = custom.fit(m)
   custom.components_ = pattern
 
