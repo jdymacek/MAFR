@@ -267,12 +267,44 @@ def loadMatrix(mat_file):
       print("FILE POINTER AT: " + str(pos))
       return (data, index)
 
+
 def computeError(original, patterns):
-  inv = np.linalg.pinv(patterns)
+#inv = np.linalg.pinv(patterns)
+  
+  custom = decomposition.NMF(n_components=len(patterns), init="random", random_state=0, max_iter=10000, solver="mu")
+  custom = custom.fit(original)
+  custom.components_ = patterns
+  c = custom.transform(original)
+
   c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
   return np.linalg.norm(original - m_hat)
 
+  '''
+  fileList - list of PIL image objects (loaded in with loadImage to ensure on a 16 pixel boundary)
+  pattern - pattern matrix to use as the components for the NMF model
+
+  RETURN: average error for reconstructing all images in list with the given pattern
+  '''
+
+def errorFromFiles(fileList, pattern):
+  
+  custom = decomposition.NMF(n_components=len(pattern), init="random", random_state=0, max_iter=10000,
+      solver="mu")
+
+  img = loadImage(fileList[0], 16)
+  m = imageToMatrix(img, 16)
+  custom = custom.fit(m)
+  custom.components_ = pattern
+
+  total = 0
+  for i in fileList:
+    m = imageToMatrix(i, 16)
+    W = custom.transform(m)
+    total += np.linalg.norm(m-np.dot(W, pattern))
+
+  return total / len(fileList)
+   
 def getSpecies(mat_file):
   f = open(mat_file, 'rb')
   prev = f.read(12)
@@ -287,10 +319,12 @@ def getBlocksize(mat_file):
   size = f.read(2)
   return int.from_bytes(size, byteorder='little')
 
+'''
 def quickError(original, patterns, inv):
   c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
   return np.linalg.norm(original-m_hat)
+'''
 
 #def getTimeStr():
 #return datetime.now().strftime(
