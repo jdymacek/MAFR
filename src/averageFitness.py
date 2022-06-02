@@ -6,10 +6,11 @@ import PIL
 
 DIRECTORYPATH = "/scratch/prism2022data/annotatedInverseDir/"
 PATTERNOUTPUT = "/scratch/prism2022data/averageFitnessPatterns/"
-TRAINING = "/scratch/prism2022data/training/"
+TRAINING = "/scratch/prism2022data/training_inverse/"
 
 directoryList = os.listdir(DIRECTORYPATH)
 for species in directoryList:
+    print(species)
     path = DIRECTORYPATH + species
     if not path.endswith('/'):
       path = path + "/"
@@ -19,45 +20,47 @@ for species in directoryList:
     m = MAFR.imageToMatrix(img, 16)
 
     np.random.shuffle(m)
-    population = m[:20]
+    population = m[:32]
 
     estim = decomposition.NMF(n_components=16, init="random", random_state=0, max_iter=10000, solver="mu")
-    w = estim.fit_transform(population)
-    h = estim.components_
-    MAFR.saveMatrix(h, 16, 16, species, out=PATTERNOUTPUT)
-    patterns = MAFR.matrixToImage(h, 1, len(h))
-    patterns.save(species+"-AVERAGE-FITNESS.png")
+    bestScore = 0
+    best = ''
+    for i in range(50):
+      w = estim.fit_transform(population)
+      h = estim.components_
 
-    trainingList = os.listdir(TRAINING)
-    selfTraining = TRAINING + species
+      trainingList = os.listdir(TRAINING)
+      selfTraining = TRAINING + species
 
-    selfList = os.listdir(selfTraining)
-    print(len(selfList))
-    goodSum = 0
-    for img in selfList:
-      i = MAFR.loadImage(selfTraining + "/" + img, 16)
-      matrix = MAFR.imageToMatrix(i, 16)
-      e = MAFR.computeError(matrix, h)
-      goodSum += e
+      selfList = os.listdir(selfTraining)
 
-    goodAverage = goodSum / len(selfList)
-#print(f'GOODSUM: {goodSum} over {len(selfList)}')
-    trainingList.remove(species)
+      self = []
+      for img in selfList:
+        i = MAFR.loadImage(selfTraining + "/" + img, 16)
+        self.append(i)
+
+      trainingList.remove(species)
     
-    badSum = 0
-    total = 0
-    for s in trainingList:
-      imgPath = TRAINING + species
-      temp = os.listdir(imgPath)
-      print(temp)
-      for i in temp:
-        image = MAFR.loadImage(imgPath + "/" + i, 16)
-        matrix = MAFR.imageToMatrix(image, 16)
-        badSum += MAFR.computeError(matrix, h)
-        total += 1
+      others = []
+      for s in trainingList:
+        imgPath = TRAINING + s
+        print(imgPath)
+        temp = os.listdir(imgPath)
+        for i in temp:
+          image = MAFR.loadImage(imgPath + "/" + i, 16)
+          others.append(image)
     
-    print(f'BADSUM: {badSum} over {total}')
-    badAverage = badSum / total
+      print(len(others))
+      selfAverage = MAFR.errorFromFiles(self, h)
+      print(f"Self-Average: {selfAverage}")
+      otherAverage = MAFR.errorFromFiles(others, h)
+      print(f"Other-Average: {otherAverage}")
+    
+      score = otherAverage/selfAverage
+      print(score)
 
-#print(f"FOR {species}: GOOD AVERAGE = {goodAverage}\tBAD AVERAGE = {badAverage}\tTOTAL SCORE = {badAverage/goodAverage}")   
-    
+      if score > bestScore:
+        bestScore = score
+        best = h
+
+    MAFR.saveMatrix(best, 16, 16, species, out=PATTERNOUTPUT)
