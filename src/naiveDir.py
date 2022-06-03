@@ -8,6 +8,7 @@ import argparse
 import os
 import sys
 import datetime
+import naiveclassifier
 
 cwd = os.getcwd
 parser=argparse.ArgumentParser()
@@ -31,24 +32,34 @@ dirs = os.listdir(testingDir)
 out = os.listdir(outputDir)
 
 num = 0
-outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.txt'
+outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.csv'
 while(1):
   if os.path.exists(outputPath):
     num += 1
-    outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.txt'
+    outputPath = outputDir + '/' + 'naive-' + str(num).zfill(2) + '-' + str(blockSize) + '.csv'
   else:
     break
+
+hits = {k:0 for k in dirs}
+rv = {k:hits for k in dirs}
+#print(rv)
 
 for d in dirs:
   dPath = testingDir + '/' + d
   pngs = os.listdir(dPath)
-  species = dPath[-4:]
-  print(species)
+  expect = dPath[-4:]
+  print(expect)
 
   for img in pngs:
+    imgPath = dPath + "/" + img
+    guess = naiveclassifier.naiveclassifier(patternDir, imgPath, blockSize)
+    rv[expect][guess] += 1
+
+print(rv)
+'''
     with open(outputPath, 'a') as f:
       f.write(f'{species}\t')
     imgPath = dPath + '/' + img
 #print(outputPath)
     os.system(f'python3 naiveclassifier.py -d {patternDir} -f {imgPath} -b {str(blockSize)} >> {outputPath}')
-
+'''

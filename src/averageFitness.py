@@ -19,13 +19,14 @@ for species in directoryList:
     img = MAFR.loadImage(path + subDirectory[0], 16)
     m = MAFR.imageToMatrix(img, 16)
 
-    np.random.shuffle(m)
-    population = m[:32]
 
-    estim = decomposition.NMF(n_components=16, init="random", random_state=0, max_iter=10000, solver="mu")
+    estim = decomposition.NMF(n_components=32, init="random", random_state=0, max_iter=10000, solver="mu")
     bestScore = 0
     best = ''
-    for i in range(50):
+    for i in range(5):
+      np.random.shuffle(m)
+      population = m[:50]
+
       w = estim.fit_transform(population)
       h = estim.components_
 
@@ -63,4 +64,4 @@ for species in directoryList:
         bestScore = score
         best = h
 
-    MAFR.saveMatrix(best, 16, 16, species, out=PATTERNOUTPUT)
+    MAFR.saveMatrix(best, 32, 16, species, out=PATTERNOUTPUT)
