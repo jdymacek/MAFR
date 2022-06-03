@@ -9,6 +9,7 @@ import os
 import sys
 import datetime
 import naiveclassifier
+import csv
 
 cwd = os.getcwd
 parser=argparse.ArgumentParser()
@@ -56,6 +57,16 @@ for d in dirs:
     rv[expect][guess] += 1
 
 print(rv)
+
+
+with open(outputPath, "w") as csvfile:
+  writer = csv.DictWriter(csvfile, dirs)
+  for key, val in sorted(rv.items()):
+    row = {dirs[0]: key}
+    row.update(val)
+    writer.writerow(row)
+f.close()
+
 '''
     with open(outputPath, 'a') as f:
       f.write(f'{species}\t')

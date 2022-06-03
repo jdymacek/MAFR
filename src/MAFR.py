@@ -272,14 +272,14 @@ def loadMatrix(mat_file):
 def computeError(original, patterns):
 #inv = np.linalg.pinv(patterns)
   
+  print(original.shape)
+  print(patterns.shape)
   custom = decomposition.NMF(n_components=len(patterns), init="random", random_state=0, max_iter=10000, solver="mu")
   custom = custom.fit(original)
   custom.components_ = patterns
   c = custom.transform(original)
 
-  c = np.matmul(original, inv)
-  m_hat = np.matmul(c, patterns)
-  return np.linalg.norm(original - m_hat)
+  return np.linalg.norm(original-np.dot(c, patterns))
 
   '''
   fileList - list of PIL image objects (loaded in with loadImage to ensure on a 16 pixel boundary)

@@ -29,7 +29,7 @@ def naiveclassifier(patternPath, imagePath, blockSize):
   for f in files:
     if f.endswith('.nmf'):
       path = patternPath + '/' + f
-      m = MAFR.loadMatrix(path)
+      m, labels = MAFR.loadMatrix(path)
       e = MAFR.computeError(img_matrix, m)
 #file_list += (f, e)
       s = MAFR.getSpecies(path)
