@@ -30,6 +30,12 @@ model = decomposition.NMF(n_components=len(patterns), init="random", random_stat
 model.fit(m)
 model.components_ = patterns
 
+allFiles = [allFiles[0]]
+
+
+
+
+
 confusion = { x : {y: 0 for y in tstClasses} for x in tstClasses }
 
 for f in allFiles:
@@ -39,9 +45,19 @@ for f in allFiles:
 
 	hits = {k : 0 for k in tstClasses}
 	
+
 	for block in W:
+		percents = {k : 0 for k in tstClasses}
 		idx = np.argmax(block)
 		hits[annotation[idx]] += 1
+		
+		block = block/ np.sum(block)
+		for i in range(0,len(annotation)):
+			percents[annotation[i]] += block[i]
+		ss = [(x,y) for y,x in percents.items()]
+		ss.sort(reverse=True)
+		print(ss)
+
 
 	predicted = max(hits, key=hits.get)
 	confusion[predicted][ os.path.basename(os.path.dirname(f))] += 1
