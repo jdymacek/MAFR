@@ -110,3 +110,14 @@ closestDivisor finds the largest divisor of n that is less than sqrt(n).
 
 *Returns:*
 - The closest divisor of n, less than the sqrt(n).
+
+### saveNewFormat(matrixPath, blockSize, out=os.getcwd())
+saveNewFormat combines all .nmf files in a given directory into a single file
+
+Parameters:
+- matrixPath: path to directory of .nmf pattern files
+- blockSize: size of tiles for patterns
+- out: path to desired output location
+
+Returns:
+- None, but saves new combined file to disk
