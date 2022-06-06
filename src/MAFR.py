@@ -304,7 +304,29 @@ def errorFromFiles(fileList, pattern):
     total += np.linalg.norm(m-np.dot(W, pattern))
 
   return total / len(fileList)
-   
+  
+
+
+def errorWithFiles(fileList, pattern):
+
+  custom = decomposition.NMF(n_components=len(pattern), init="random", random_state=0, max_iter=10000,
+      solver="mu")
+
+  m = imageToMatrix(fileList[0], 16)
+  custom = custom.fit(m)
+  custom.components_ = pattern
+
+
+  errors = {}	
+  for i in fileList:
+    m = imageToMatrix(i, 16)
+    W = custom.transform(m)
+    errors[i] = np.linalg.norm(m-np.dot(W, pattern))
+
+  return errors
+
+
+ 
 def getSpecies(mat_file):
   f = open(mat_file, 'rb')
   prev = f.read(12)
