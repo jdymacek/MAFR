@@ -20,6 +20,7 @@ blockSize = MAFR.getBlocksize(patternFile)
 img = MAFR.loadImage(imagePath, blockSize)
 m = MAFR.imageToMatrix(img, blockSize)
 
+
 patterns, index = MAFR.loadMatrix(patternFile)
 
 print(patterns.shape)
@@ -32,13 +33,16 @@ model = decomposition.NMF(n_components=len(patterns), init="random", random_stat
 model.fit(m)
 model.components_ = patterns
 
-W = model.transform(patterns)
+W = model.transform(m)
 
-print(W)
+print(W.shape)
+
+print(m.shape)
 
 for row in W:
-  idx = np.where(row == np.amax(row))
-  winner = index[idx[0][0]]
+  idx = np.argmax(row)
+#  idx = np.where(row == np.amax(row))
+  winner = index[idx]
   hits[winner] += 1
 
 print(hits)
