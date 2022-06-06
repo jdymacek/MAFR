@@ -308,18 +308,20 @@ def errorFromFiles(fileList, pattern):
 
 
 def errorWithFiles(fileList, pattern):
-
+  pattern = pattern[0]
   custom = decomposition.NMF(n_components=len(pattern), init="random", random_state=0, max_iter=10000,
       solver="mu")
 
-  m = imageToMatrix(fileList[0], 16)
+  img = loadImage(fileList[0], 16) 
+  m = imageToMatrix(img, 16)
   custom = custom.fit(m)
   custom.components_ = pattern
 
 
   errors = {}	
   for i in fileList:
-    m = imageToMatrix(i, 16)
+    img = loadImage(i, 16)
+    m = imageToMatrix(img, 16)
     W = custom.transform(m)
     errors[i] = np.linalg.norm(m-np.dot(W, pattern))
 
