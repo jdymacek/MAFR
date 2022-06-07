@@ -5,10 +5,14 @@ from sklearn import decomposition
 import PIL
 
 DIRECTORYPATH = "/scratch/prism2022data/annotatedInverseDir/"
-PATTERNOUTPUT = "/scratch/prism2022data/averageFitnessPatterns/"
+PATTERNOUTPUT = "/scratch/prism2022data/averageNoise/"
 TRAINING = "/scratch/prism2022data/training_inverse/"
+NOISE = "/scratch/prism2022data/inverted-noise/JUNK-00+16+16+32.nmf"
 
 directoryList = os.listdir(DIRECTORYPATH)
+
+noise, labels = MAFR.loadMatrix(NOISE)
+
 for species in directoryList:
     print(species)
     path = DIRECTORYPATH + species
@@ -27,7 +31,9 @@ for species in directoryList:
       np.random.shuffle(m)
       population = m[:50]
 
-      w = estim.fit_transform(population)
+      pop = np.concatenate((population, noise), axis=0)
+
+      w = estim.fit_transform(pop)
       h = estim.components_
 
       trainingList = os.listdir(TRAINING)
