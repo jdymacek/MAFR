@@ -65,7 +65,7 @@ with open(outputPath, "w") as csvfile:
     row = {dirs[0]: key}
     row.update(val)
     writer.writerow(row)
-f.close()
+csvfile.close()
 
 '''
     with open(outputPath, 'a') as f:

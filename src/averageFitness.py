@@ -7,7 +7,6 @@ import PIL
 DIRECTORYPATH = "/scratch/prism2022data/annotatedInverseDir/"
 PATTERNOUTPUT = "/scratch/prism2022data/averageNoise/"
 TRAINING = "/scratch/prism2022data/training_inverse/"
-NOISE = "/scratch/prism2022data/inverted-noise/JUNK-00+16+16+32.nmf"
 
 directoryList = os.listdir(DIRECTORYPATH)
 
@@ -31,9 +30,8 @@ for species in directoryList:
       np.random.shuffle(m)
       population = m[:50]
 
-      pop = np.concatenate((population, noise), axis=0)
 
-      w = estim.fit_transform(pop)
+      w = estim.fit_transform(population)
       h = estim.components_
 
       trainingList = os.listdir(TRAINING)

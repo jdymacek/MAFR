@@ -22,12 +22,12 @@ m = MAFR.imageToMatrix(img, blockSize)
 
 
 patterns, index = MAFR.loadMatrix(patternFile)
-
 print(patterns.shape)
 
 hits = {k:0 for k in CLASSES}
-print(hits)
+percentages = {k:0 for k in CLASSES}
 
+print(hits)
 
 model = decomposition.NMF(n_components=len(patterns), init="random", random_state=0, max_iter=10000, solver="mu")
 model.fit(m)
@@ -40,9 +40,17 @@ print(W.shape)
 print(m.shape)
 
 for row in W:
+  percents = {k:0 for k in CLASSES}
   idx = np.argmax(row)
-#  idx = np.where(row == np.amax(row))
   winner = index[idx]
   hits[winner] += 1
 
-print(hits)
+  row = row / np.sum(row)
+  for i in range(len(index)):
+    percents[index[i]] += row[i]
+  ss = [(x,y) for y,x in percents.items()]
+  ss.sort(reverse=True)
+  print(ss)
+
+guess = max(hits, key=hits.get)
+print(guess)
