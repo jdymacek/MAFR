@@ -237,12 +237,10 @@ def loadMatrix(mat_file):
           index.append(codeString)
 
       pos = f.tell()
-      print("FILE POINTER AT: " + str(pos))
 
       #byte_arr = f.read(p*((b*b) * bpe))
       byte_arr = f.read()
       pos = f.tell()
-      print("FILE POINTER AT: " + str(pos))
 
       a = np.frombuffer(byte_arr, dtype=np.double)
       data = a.reshape(p, b*b)
@@ -265,7 +263,6 @@ def loadMatrix(mat_file):
       '''
 
       pos = f.tell()
-      print("FILE POINTER AT: " + str(pos))
       return (data, index)
 
 
