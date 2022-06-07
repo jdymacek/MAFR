@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from MAFR import loadImage,imageToMatrix, computeError, saveMatrix
+from MAFR import loadImage,imageToMatrix, computeError, saveMatrix, errorFromFiles, loadMatrix
 import random
 import argparse
 from sklearn import decomposition
@@ -24,7 +24,7 @@ bestPattern = decomposition.NMF(n_components=16, init='random', random_state=0, 
 while j < len(blockList):
   if arg.s in blockList[j]:
      l=0
-     while l < 500:
+     while l < 10:
        print(l)
        errList = []
        curImg = loadImage(cwd+'/bigBlockClasses/'+blockList[j], 16)
@@ -50,16 +50,27 @@ while j < len(blockList):
           curr_err=0
 
           m=0
+          randList=[]
+          fileList = os.listdir('training_inverse/'+classDir)
           while m < 20:
-                fileList = os.listdir('training_inverse/'+classDir)
-                randImg = loadImage('training_inverse/'+classDir+'/'+fileList[random.randint(0, len(fileList)-1)], 16)
-                randMat = imageToMatrix(randImg, 16)
-                curr_err = computeError(randMat, patt_mat)
-                sum_err+=curr_err
-                m+=1
-          newErr = sum_err//20
+            randList.append(0)
+            randList[m] = fileList[random.randint(0, len(fileList)-1)]
+            m+=1
+
+          n=0
+          imgList=[]
+          while n <20:
+            imgList.append(0)
+            randImg = loadImage('training_inverse/'+classDir+'/'+randList[n], 16)
+#randMat = imageToMatrix(randImg, 16)
+            imgList[n] = randImg
+            n+=1
+
+          newErr = errorFromFiles(imgList, patt_mat)
           errList.append(newErr)
 
+       print("Current Best: " + str(overallList))
+       print("Current Contender: " + str(errList))
        if l>0:
           r=0
           classIndex=0
@@ -81,47 +92,40 @@ while j < len(blockList):
             elif arg.s == 'OVEN':
               classIndex=6
 
-            diff = statistics.stdev(errList+overallList)
             if classIndex == r:
 	      #needs to be less strict here
               q=0
-              higher=0
-              while q < len(overallList):
-                if errList[r] >= overallList[q]:
-                  higher+=1
+              curr_higher=0
+              overall_higher=0
+              while q < len(errList):
+                if errList[r] >= errList[q]:
+                  curr_higher+=1
+                if overallList[r] >= overallList[q]:
+                  overall_higher+=1
                 q+=1
 
-              if higher ==6:
-                if errList[r] <= overallList[r]:
-                  curr_score+=2
-              else:
-                if errList[r] <= overallList[r]:
-                  curr_score+=1
-                best_score+=higher
-                print(best_score)
+                best_score+=overall_higher
+                curr_score+=curr_higher
+
 
             else:
               if errList[r] >= overallList[r]:
                  curr_score+=1
-              else:
-                 if errList[r] >= (overallList[r]-diff):
-                   best_score+=0.5
-                 else:
-                   best_score+=1
 
             r+=1
-
-          if curr_score > best_score:
+#gold scores, higher score = worser
+          if curr_score <= best_score:
              overallList = errList
              bestPattern = patt_mat
 
+          print("Best so far score: " + str(best_score))
+          print("Current contender score: " + str(curr_score))
        else:
           overallList = errList
           bestPattern = patt_mat
 
        l+=1
-       print("Current Best: " + str(overallList))
-       print("Current Contender: " + str(errList))
+
      j+=1
   else:
      j+=1
