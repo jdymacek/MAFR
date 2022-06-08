@@ -191,6 +191,59 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
     f.write(data)
     f.close()
 
+def saveHitPatterns(patterns, annotations, blockSize):
+    sig = 'NMFC'
+    sigFirst = merge_chars(sig[1], sig[0])
+    sigSecond = merge_chars(sig[3], sig[2])
+
+    header = np.ndarray(8,dtype=np.uint16)
+    header[0] = sigFirst
+    header[1] = sigSecond
+    header[2] = 2049
+    #header[3] = patterns
+    header[4] = blockSize
+    header[5] = 0
+    header[6] = 0
+    header[7] = 0
+
+
+    ml = []
+    indexList = []
+    for f in files:
+        path = matrixPath + f
+        matrix, labels = loadMatrix(path)
+        indexList += labels
+        ml += [matrix]
+
+    M = np.concatenate(ml)
+
+    print("FROM SAVE:\n" + str(M))
+    data = M.tobytes()
+
+    patterns = len(annotations)
+    header[3] = patterns
+    indexBytes = patterns * 2
+
+    index = np.ndarray(indexBytes, dtype=np.uint16)
+    i = 0
+    for e in annotations:
+        sFirst = merge_chars(e[1], e[0])
+        sLast = merge_chars(e[3], e[2])
+        index[i] = sFirst
+        index[i+1] = sLast
+        i += 2
+
+    now = datetime.now()
+    dt = now.strftime('%m-%d-%y-%H:%M:%S')
+
+    filename = out + "/" + dt + "+" + str(blockSize) + "+" + str(patterns) + ".nmf"
+    f = open(filename, "wb")
+    f.write(header)
+    f.write(index)
+    f.write(data)
+    f.close()
+
+
 def loadMatrix(mat_file):
   f = open(mat_file, 'rb')
 
