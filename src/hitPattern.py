@@ -5,11 +5,11 @@ import numpy as np
 import os
 from sklearn import decomposition
 
-AMRE_PATH = "/scratch/prism2022data/annotatedInverseData/AMRE/AMRE_bigAnnoatedInvBlock.png"
-BBWA_PATH = "/scratch/prism2022data/annotatedInverseData/BBWA/BBWA_bigAnnoatedInvBlock.png"
-BTBW_PATH = "/scratch/prism2022data/annotatedInverseData/BTBW/BTBW_bigAnnoatedInvBlock.png"
-COYE_PATH = "/scratch/prism2022data/annotatedInverseData/COYE/COYE_bigAnnoatedInvBlock.png"
-OVEN_PATH = "/scratch/prism2022data/annotatedInverseData/OVEN/OVEN_bigAnnoatedInvBlock.png"
+AMRE_PATH = "/scratch/prism2022data/annotatedInverseDir/AMRE/AMRE_bigAnnoatedInvBlock.png"
+BBWA_PATH = "/scratch/prism2022data/annotatedInverseDir/BBWA/BBWA_bigAnnoatedInvBlock.png"
+BTBW_PATH = "/scratch/prism2022data/annotatedInverseDir/BTBW/BTBW_bigAnnoatedInvBlock.png"
+COYE_PATH = "/scratch/prism2022data/annotatedInverseDir/COYE/COYE_bigAnnoatedInvBlock.png"
+OVEN_PATH = "/scratch/prism2022data/annotatedInverseDir/OVEN/OVEN_bigAnnoatedInvBlock.png"
 BLOCKSIZE = 16
 PATTERNS = 16
 # open each big block as matrix:
@@ -33,44 +33,54 @@ ovenMatrix = MAFR.imageToMatrix(ovenImg, BLOCKSIZE)
 matrices.append(ovenMatrix)
 
 classes = ["AMRE", "BBWA", "BTBW", "COYE", "OVEN"]
-annotation = []
-#randomly take 50 rows of each matrix
-ml = []
-model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
-for i, m in enumerate(matrices):
-    np.random.shuffle(m)
-    population = m[:32]
-    model.fit_transform(population)
-    ml += [model.components_]
-    for j in range(PATTERNS):
-        annotation.append(classes[i])
-patterns = np.concatenate(ml)
+bestScore = 0
+bestPatterns = ""
+for i in range(100):
+    annotation = []
+    #randomly take 50 rows of each matrix
+    ml = []
+    model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
+    for i, m in enumerate(matrices):
+        np.random.shuffle(m)
+        population = m[:32]
+        model.fit_transform(population)
+        ml += [model.components_]
+        for j in range(PATTERNS):
+            annotation.append(classes[i])
+    patterns = np.concatenate(ml)
 
-# test set of patterns against each block in each bigBlock
-# assess fitness based on hitrate
+    # test set of patterns against each block in each bigBlock
+    # assess fitness based on hitrate
 
-model.components_ = patterns
+    model = decomposition.NMF(n_components=PATTERNS*len(classes), init="random", random_state=0, max_iter=10000, solver="mu")
+    model.fit(matrices[0])
+    model.components_ = patterns
 
-for i, m in enumerate(matrices):
-    W = model.transform(m)
-    correct = classes[i]
-    hits = {k:0 for k in classes}
-    for block in W:
-        percents = {k:0 for k in classes}
-        block /= np.sum(block)
-        for j in range(0, len(annotation)):
-            percents[annotation[j]] += block[j]
-        ss = [(x,y) for y,x in percents.items()]
-        ss.sort(reverse=True)
-        hits[ss[0][1]] += 1
-    print(hits)
+    total = 0
+    for i, m in enumerate(matrices):
+        W = model.transform(m)
+        correct = classes[i]
+        hits = {k:0 for k in classes}
+        for block in W:
+            percents = {k:0 for k in classes}
+            block /= np.sum(block)
+            for j in range(0, len(annotation)):
+                percents[annotation[j]] += block[j]
+            ss = [(x,y) for y,x in percents.items()]
+            ss.sort(reverse=True)
+            hits[ss[0][1]] += 1 
+        total += hits[correct]
+    print(total/(len(classes)*256))
+    
+    if total/(len(classes)*256) > bestScore:
+        bestScore = total/(len(classes)*256)
+        best = patterns
 
 
+MAFR.saveHitPatterns(best, annotation, BLOCKSIZE)
+	
 
-
-
-
-
+	
 
 
 

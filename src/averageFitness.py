@@ -5,12 +5,10 @@ from sklearn import decomposition
 import PIL
 
 DIRECTORYPATH = "/scratch/prism2022data/annotatedInverseDir/"
-PATTERNOUTPUT = "/scratch/prism2022data/averageNoise/"
+PATTERNOUTPUT = "/scratch/prism2022data/averageFitnessPatterns/"
 TRAINING = "/scratch/prism2022data/training_inverse/"
 
 directoryList = os.listdir(DIRECTORYPATH)
-
-noise, labels = MAFR.loadMatrix(NOISE)
 
 for species in directoryList:
     print(species)
@@ -26,10 +24,9 @@ for species in directoryList:
     estim = decomposition.NMF(n_components=32, init="random", random_state=0, max_iter=10000, solver="mu")
     bestScore = 0
     best = ''
-    for i in range(5):
+    for i in range(20):
       np.random.shuffle(m)
       population = m[:50]
-
 
       w = estim.fit_transform(population)
       h = estim.components_

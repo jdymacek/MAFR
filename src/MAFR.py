@@ -191,7 +191,7 @@ def saveNewFormat(matrixPath, blockSize, out=os.getcwd()):
     f.write(data)
     f.close()
 
-def saveHitPatterns(patterns, annotations, blockSize):
+def saveHitPatterns(matrix, annotations, blockSize, out=os.getcwd()):
     sig = 'NMFC'
     sigFirst = merge_chars(sig[1], sig[0])
     sigSecond = merge_chars(sig[3], sig[2])
@@ -206,23 +206,11 @@ def saveHitPatterns(patterns, annotations, blockSize):
     header[6] = 0
     header[7] = 0
 
-
-    ml = []
-    indexList = []
-    for f in files:
-        path = matrixPath + f
-        matrix, labels = loadMatrix(path)
-        indexList += labels
-        ml += [matrix]
-
-    M = np.concatenate(ml)
-
-    print("FROM SAVE:\n" + str(M))
-    data = M.tobytes()
-
     patterns = len(annotations)
     header[3] = patterns
     indexBytes = patterns * 2
+
+    data = matrix.tobytes()
 
     index = np.ndarray(indexBytes, dtype=np.uint16)
     i = 0
