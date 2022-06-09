@@ -35,9 +35,11 @@ matrices.append(ovenMatrix)
 classes = ["AMRE", "BBWA", "BTBW", "COYE", "OVEN"]
 bestScore = 0
 bestPatterns = ""
+# not 100 times, while temp > final
 for i in range(100):
     annotation = []
-    #randomly take 50 rows of each matrix
+    #randomly take 50 rows of each matrix, move outside of loop
+    #need to make change
     ml = []
     model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
     for i, m in enumerate(matrices):
@@ -75,7 +77,7 @@ for i in range(100):
     if total/(len(classes)*256) > bestScore:
         bestScore = total/(len(classes)*256)
         best = patterns
-
+    #otherwise, random probability to take worse
 
 MAFR.saveHitPatterns(best, annotation, BLOCKSIZE)
 	
