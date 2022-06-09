@@ -23,9 +23,18 @@ dirList = os.listdir('training')
 while j<int(args.n):
       randDir = dirList[random.randint(0, len(dirList)-1)]
       randDir_list = os.listdir('training/' +randDir)
-      randImgL = loadImage('training/' +randDir+'/'+randDir_list[random.randint(0, len(randDir_list)-1)], 256)
+      randPath = 'training/' +randDir+'/'+randDir_list[random.randint(0, len(randDir_list)-1)]
+
+      with open(args.t) as temp_f:
+        datafile = temp_f.readlines()
+
+      for line in datafile:
+          if randPath in line:
+             continue
+
+      randImgL = loadImage(randPath, 256)
       randImgMat = imageToMatrix(randImgL, 16)
-      takenBlock = randImgMat[j]
+      takenBlock = randImgMat[random.randint(0, 255)]
       paddedBlock += [takenBlock]
       j+=1
 
@@ -37,7 +46,7 @@ paddedImg.save("randomBigBlock.png")
 
 
 
-#specific amount of annoatated blocks into one image
+#annoatated blocks into one image
 allAnn = []
 with open(args.t) as temp_f:
   datafile = temp_f.readlines()
@@ -51,13 +60,14 @@ for line in datafile:
 
 while len(classList) < int(args.n):
    classList = classList+classList
-   print(len(classList))
+
+print(len(classList))
 
 loopVar =0
 while loopVar < int(args.n):
     line = classList[random.randint(0, len(classList)-1)]
     lineParsed = line.split()
-    if len(lineParsed) <2:
+    if len(lineParsed) < 2:
        continue
 
     theBlock = int(lineParsed[len(lineParsed)-1])
@@ -72,20 +82,22 @@ h = closestDivisor(len(allAnn))
 w = len(allAnn)//h
 print(w, h)
 bigImg = matrixToImage(allAnn, w, h)
-bigImg.save(args.c "_bigAnnoatedBlock.png")
+bigImg.save("annotatedDir/" + args.c + "/" + args.c +"_bigAnnoatedBlock.png")
 #end
 
 
 
 
-#extract all annoated blocks from class
+#extract blocks from images
 file_list = os.listdir(args.d)
 M = []
+annCounter=0
 for filename in file_list:
     with open(args.t) as temp_f:
         datafile = temp_f.readlines()
     for line in datafile:
         if filename in line:
+           annCounter+=1
            lineParsed = line.split()
            i=1
            while i < len(lineParsed):
@@ -102,7 +114,8 @@ for filename in file_list:
                  M += [row]
                  
 
+print("Number of annotatios for" + args.c + ": " + str(annCounter))
 h = closestDivisor(len(M))
 w = len(M)//h
 bigImg = matrixToImage(M, w, h)
-bigImg.save("annotatedDir/" + args.c + "/" + args.c + "_allBlockSignals.png")
+bigImg.save("allBlockSignals.png")
