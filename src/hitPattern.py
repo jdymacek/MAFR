@@ -5,13 +5,26 @@ import numpy as np
 import os
 from sklearn import decomposition
 
+BLOCKSIZE = 16
+PATTERNS = 16
+PATH = "/scratch/prism2022data/annotatedInverseDir/"
+
+classes = next(os.walk(PATH))[1]
+classes = classes.sort()
+
+paths = {k:"" for k in classes}
+
+for c in classes:
+    paths[c] = PATH + c + "/" + c + "_bigAnnoatedInvBlock.png"
+
+print(paths)
+'''
 AMRE_PATH = "/scratch/prism2022data/annotatedInverseDir/AMRE/AMRE_bigAnnoatedInvBlock.png"
 BBWA_PATH = "/scratch/prism2022data/annotatedInverseDir/BBWA/BBWA_bigAnnoatedInvBlock.png"
 BTBW_PATH = "/scratch/prism2022data/annotatedInverseDir/BTBW/BTBW_bigAnnoatedInvBlock.png"
 COYE_PATH = "/scratch/prism2022data/annotatedInverseDir/COYE/COYE_bigAnnoatedInvBlock.png"
 OVEN_PATH = "/scratch/prism2022data/annotatedInverseDir/OVEN/OVEN_bigAnnoatedInvBlock.png"
-BLOCKSIZE = 16
-PATTERNS = 16
+'''
 # open each big block as matrix:
 
 redstartImg = MAFR.loadImage(AMRE_PATH, BLOCKSIZE)
@@ -32,7 +45,6 @@ matrices.append(yellowthroatMatrix)
 ovenMatrix = MAFR.imageToMatrix(ovenImg, BLOCKSIZE)
 matrices.append(ovenMatrix)
 
-classes = ["AMRE", "BBWA", "BTBW", "COYE", "OVEN"]
 bestScore = 0
 bestPatterns = ""
 # not 100 times, while temp > final
