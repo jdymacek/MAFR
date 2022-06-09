@@ -82,7 +82,8 @@ while(currentTemp > finalTemp):
     np.random.shuffle(matrices[toChange])
     newBlocks = matrices[toChange][:32]
     model.fit_transform(newBlocks)
-    neighborPatterns[toChange] = model.components_
+    r = random.randint(0,16)
+    neighborPatterns[toChange][r] = model.components_[r]
 
     ml = []
     for k,v in neighborPatterns.items():
