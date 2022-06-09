@@ -3,6 +3,8 @@
 import MAFR
 import numpy as np
 import os
+import random
+import math
 from sklearn import decomposition
 
 BLOCKSIZE = 16
@@ -10,73 +12,68 @@ PATTERNS = 16
 PATH = "/scratch/prism2022data/annotatedInverseDir/"
 
 classes = next(os.walk(PATH))[1]
-classes = classes.sort()
+classes = sorted(classes)
 
 paths = {k:"" for k in classes}
 
 for c in classes:
     paths[c] = PATH + c + "/" + c + "_bigAnnoatedInvBlock.png"
 
-print(paths)
-'''
-AMRE_PATH = "/scratch/prism2022data/annotatedInverseDir/AMRE/AMRE_bigAnnoatedInvBlock.png"
-BBWA_PATH = "/scratch/prism2022data/annotatedInverseDir/BBWA/BBWA_bigAnnoatedInvBlock.png"
-BTBW_PATH = "/scratch/prism2022data/annotatedInverseDir/BTBW/BTBW_bigAnnoatedInvBlock.png"
-COYE_PATH = "/scratch/prism2022data/annotatedInverseDir/COYE/COYE_bigAnnoatedInvBlock.png"
-OVEN_PATH = "/scratch/prism2022data/annotatedInverseDir/OVEN/OVEN_bigAnnoatedInvBlock.png"
-'''
 # open each big block as matrix:
 
-redstartImg = MAFR.loadImage(AMRE_PATH, BLOCKSIZE)
-bayImg = MAFR.loadImage(BBWA_PATH, BLOCKSIZE)
-blackthroatImg = MAFR.loadImage(BTBW_PATH, BLOCKSIZE)
-yellowthroatImg = MAFR.loadImage(COYE_PATH, BLOCKSIZE)
-ovenImg = MAFR.loadImage(OVEN_PATH, BLOCKSIZE)
+matrices = {k:"" for k in classes}
+for c in classes:
+    matrices[c] = MAFR.imageToMatrix(MAFR.loadImage(paths[c], BLOCKSIZE), BLOCKSIZE)
 
-matrices = []
-redstartMatrix = MAFR.imageToMatrix(redstartImg, BLOCKSIZE)
-matrices.append(redstartMatrix)
-bayMatrix = MAFR.imageToMatrix(bayImg, BLOCKSIZE)
-matrices.append(bayMatrix)
-blackthroatMatrix = MAFR.imageToMatrix(blackthroatImg, BLOCKSIZE)
-matrices.append(blackthroatMatrix)
-yellowthroatMatrix = MAFR.imageToMatrix(yellowthroatImg, BLOCKSIZE)
-matrices.append(yellowthroatMatrix)
-ovenMatrix = MAFR.imageToMatrix(ovenImg, BLOCKSIZE)
-matrices.append(ovenMatrix)
+annotation = []
+ml = []
+currentPatterns = {k:"" for k in classes}
+model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
+for k,v in matrices.items():
+    np.random.shuffle(v)
+    population = v[:32]
+    model.fit_transform(population)
+    currentPatterns[k] = model.components_
+    ml += [model.components_]
+    for j in range(PATTERNS):
+        annotation.append(k)
 
+currentState = np.concatenate(ml)
+
+initialTemp = 5
+finalTemp = 0.1
+alpha = 0.01
+currentTemp = initialTemp
+
+'''
 bestScore = 0
 bestPatterns = ""
-# not 100 times, while temp > final
-for i in range(100):
-    annotation = []
-    #randomly take 50 rows of each matrix, move outside of loop
-    #need to make change
+'''
+while(currentTemp > finalTemp):
+
+    neighborPatterns = currentPatterns
+    toChange = random.choice(classes)
+    np.random.shuffle(matrices[toChange])
+    newBlocks = matrices[toChange][:32]
+    model.fit_transform(newBlocks)
+    neighborPatterns[toChange] = model.components_
+
     ml = []
-    model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
-    for i, m in enumerate(matrices):
-        np.random.shuffle(m)
-        population = m[:32]
-        model.fit_transform(population)
-        ml += [model.components_]
-        for j in range(PATTERNS):
-            annotation.append(classes[i])
-    patterns = np.concatenate(ml)
+    for k,v in neighborPatterns.items():
+        ml += [v]
+    neighbor = np.concatenate(ml)
 
-    # test set of patterns against each block in each bigBlock
-    # assess fitness based on hitrate
-
-    model = decomposition.NMF(n_components=PATTERNS*len(classes), init="random", random_state=0, max_iter=10000, solver="mu")
-    model.fit(matrices[0])
-    model.components_ = patterns
+    currEstim = decomposition.NMF(n_components=PATTERNS*len(classes), init="random", random_state=0, max_iter=10000, solver="mu")
+    currEstim.fit(matrices["AMRE"])
+    currEstim.components_ = currentState
 
     total = 0
-    for i, m in enumerate(matrices):
-        W = model.transform(m)
-        correct = classes[i]
-        hits = {k:0 for k in classes}
+    for k,v in matrices.items():
+        W = currEstim.transform(v)
+        correct = k
+        hits = {c:0 for c in classes}
         for block in W:
-            percents = {k:0 for k in classes}
+            percents = {c:0 for c in classes}
             block /= np.sum(block)
             for j in range(0, len(annotation)):
                 percents[annotation[j]] += block[j]
@@ -84,20 +81,38 @@ for i in range(100):
             ss.sort(reverse=True)
             hits[ss[0][1]] += 1 
         total += hits[correct]
-    print(total/(len(classes)*256))
+    currentScore = 1 - (total/(len(classes)*256))
     
-    if total/(len(classes)*256) > bestScore:
-        bestScore = total/(len(classes)*256)
-        best = patterns
-    #otherwise, random probability to take worse
+    neighborEstim = decomposition.NMF(n_components=PATTERNS*len(classes), init="random", random_state=0, max_iter=10000, solver="mu")
+    neighborEstim.fit(matrices["AMRE"])
+    neighborEstim.components_ = neighbor
 
-MAFR.saveHitPatterns(best, annotation, BLOCKSIZE)
+    neighborTotal = 0
+    for k,v in matrices.items():
+        W = neighborEstim.transform(v)
+        correct = k
+        hits = {c:0 for c in classes}
+        for block in W:
+            percents = {c:0 for c in classes}
+            block /= np.sum(block)
+            for j in range(0, len(annotation)):
+                percents[annotation[j]] += block[j]
+            ss = [(x,y) for y,x in percents.items()]
+            ss.sort(reverse=True)
+            hits[ss[0][1]] += 1 
+        neighborTotal += hits[correct]
+    neighborScore = 1 - (neighborTotal/(len(classes)*256))
+
+    diff = neighborScore - currentScore
+    diff *= 100
+    print(f"CURR: {currentScore}\tNEIGHBOR: {neighborScore}\tTEMP: {currentTemp}")
+
+    if diff < 0:
+        currentState = neighbor
+    else:
+        if random.uniform(0,1) < math.exp(-diff/currentTemp):
+            currentState = neighbor
+    currentTemp -= alpha
+
+MAFR.saveHitPatterns(solution, annotation, BLOCKSIZE)
 	
-
-	
-
-
-
-
-
-
