@@ -4,6 +4,8 @@ import numpy as np
 import argparse
 import random
 from sklearn import decomposition
+import PIL
+
 
 TRAINING = "/scratch/prism2022data/training_inverse"
 
@@ -29,4 +31,5 @@ print(M.shape)
 
 model = decomposition.NMF(n_components=blocks, init="random", random_state=0, max_iter=10000, solver="mu")
 model.fit_transform(M)
-MAFR.saveMatrix(model.components_, blocks, 16, "JUNK")
+img = MAFR.matrixToImage(M, 16)
+img.save("bigJunk.png")
