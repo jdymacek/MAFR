@@ -42,6 +42,7 @@ averageWinners = {x : (0,0) for x in tstClasses}
 histogram = {x : {y: [] for y in tstClasses} for x in tstClasses}
 classInfo = {x : 0 for x in tstClasses}
 
+overall = {x : [] for x in tstClasses}
 for f in allFiles:
 	img = MAFR.loadImage(f, 16)
 	mat = MAFR.imageToMatrix(img, 16)
@@ -66,16 +67,15 @@ for f in allFiles:
 	print(correct)
 	for c in tstClasses:
 		histogram[correct][c] += [hits[c]]
+		overall[c] += [hits[c]]
 
 
 normals = {x : {y: [] for y in tstClasses} for x in tstClasses}
-totals = {x : [] for x in tstClasses}
+totals = {x:[] for x in tstClasses}
 for x in tstClasses:
-	overall = []
 	for y in tstClasses:
 		normals[x][y] = (statistics.mean(histogram[x][y]),statistics.stdev(histogram[x][y]))
-		overall += histogram[x][y]
-	totals[x] = (statistics.mean(overall),statistics.stdev(overall))
+	totals[x] = (statistics.mean(overall[x]),statistics.stdev(overall[x]))
 	classInfo[x] /= len(allFiles)
 
 print(totals)

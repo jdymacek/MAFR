@@ -10,7 +10,7 @@ from sklearn import decomposition
 
 
 BLOCKSIZE = 16
-PATTERNS = 16
+PATTERNS = 42
 PATH = "/scratch/prism2022data/annotatedInverseDir/"
 
 classes = next(os.walk(PATH))[1]
@@ -80,10 +80,9 @@ while(currentTemp > finalTemp):
     neighborPatterns = currentPatterns
     toChange = random.choice(classes)
     np.random.shuffle(matrices[toChange])
-    newBlocks = matrices[toChange][:32]
+    newBlocks = matrices[toChange][:2*PATTERNS]
     model.fit_transform(newBlocks)
-    r = random.randint(0,16)
-    neighborPatterns[toChange][r] = model.components_[r]
+    neighborPatterns[toChange] = model.components_
 
     ml = []
     for k,v in neighborPatterns.items():
@@ -100,10 +99,12 @@ while(currentTemp > finalTemp):
     if diff < 0:
         currentState = neighbor
         currentScore = neighborScore
+        currentPatterns = neighborPatterns
     else:
         if random.uniform(0,1) < math.exp(-diff/currentTemp):
             currentState = neighbor
             currentScore = neighborScore
+            currentPatterns = neighborPatterns
 
     if currentScore < solutionScore:
         solution = currentState
