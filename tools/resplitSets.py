@@ -13,9 +13,10 @@ used = []
 for f in ann:
     s = f.split("/")[1]
     filename = f.split("/")[-1]
+    filename.replace(".png", "_inverse.png")
     if s in species:
         inverseDir = "/scratch/prism2022data/" + species[s] + "/"
-        newFile = "/scratch/prism2022data/training_inverse/" + s + "/" + filename
+        newFile = "/scratch/prism2022data/training_inverse/" + s + "/" + filename.replace("_inverse.png", ".png")
         os.system("cp " + inverseDir + filename + " " + newFile)
         used.append(filename)
 
