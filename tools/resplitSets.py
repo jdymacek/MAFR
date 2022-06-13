@@ -9,6 +9,15 @@ ann = []
 for line in csv.reader(annotations, delimiter="\t"):
     ann.append(line[0])
 
+used = []
 for f in ann:
-    species = f.split("/")[1]
-    print(species)
+    s = f.split("/")[1]
+    filename = f.split("/")[-1]
+    if s in species:
+        inverseDir = "/scratch/prism2022data/" + species[s] + "/"
+        newFile = "/scratch/prism2022data/training_inverse/" + s + "/" + filename
+        os.system("cp " + inverseDir + filename + " " + newFile)
+        used.append(filename)
+
+
+    
