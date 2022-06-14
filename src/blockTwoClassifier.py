@@ -43,8 +43,8 @@ tstClasses += ["JUNK"]
 tstClasses = sorted(tstClasses)
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
-#samples = random.sample(allFiles, 12)
-samples = allFiles
+samples = random.sample(allFiles, 1)
+#samples = allFiles
 blockSize = MAFR.getBlocksize(patternFile)
 
 img = MAFR.loadImage(allFiles[0], blockSize)
@@ -66,7 +66,7 @@ for f in samples:
     if fileName not in  annotationDict:
         counter += 1
 print(counter)
-quit()
+#quit()
 for f in samples:
     img = MAFR.loadImage(f, 16)
     mat = MAFR.imageToMatrix(img, 16)
@@ -102,4 +102,3 @@ for f in samples:
 
 
     out.close()
-
