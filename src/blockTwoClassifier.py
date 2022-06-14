@@ -31,8 +31,7 @@ with open(annotationFile) as data:
 data.close()
 
 for l in lines:
-    key = l[0][14:]
-    key = key[:-4] + "_inverse.png"
+    key = l[0][5:]
 #print(key)
     annotationDict[key] = []
     for i in range(1,len(l)):
@@ -43,7 +42,7 @@ tstClasses += ["JUNK"]
 tstClasses = sorted(tstClasses)
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
-samples = random.sample(allFiles, 1)
+samples = random.sample(allFiles, 8)
 #samples = allFiles
 blockSize = MAFR.getBlocksize(patternFile)
 
@@ -83,22 +82,22 @@ for f in samples:
 
     outName = fileName[:-3] + "csv"
     with open(outName, "w") as out:
-        out.write(headers)
+        out.write(headers + "\n")
 
         for index, block in enumerate(W):
             percents = {k : 0 for k in tstClasses}
             block = block/ np.sum(block)
+            line = ""
             for i in range(0,len(annotation)):
                 percents[annotation[i]] += block[i]
-                line = ""
             for v in percents.values():
                 line += str(v) + "\t"
             if str(index) in annotationDict[fileName]:
                 line += correct
             else:
                 line += "JUNK"
-
-            out.write(line)
+            if percents["JUNK"] < 0.166:
+                out.write(line + "\n")
 
 
     out.close()

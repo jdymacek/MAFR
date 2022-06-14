@@ -46,23 +46,23 @@ for f in allFiles:
 
     best = (0, "JUNK")
     for block in W:
-	    percents = {k : 0 for k in tstClasses}
-		block = block/ np.sum(block)
+        percents = {k : 0 for k in tstClasses}
+        block = block/ np.sum(block)
 
         for i in range(0,len(annotation)):
-		    percents[annotation[i]] += block[i]
-        if percents["JUNK"] < 0.166:
-		  ss = [(x,y) for y,x in percents.items()]
-		  ss.sort(reverse=True)
-		  if ss[0][1] != "JUNK" and ss[0][0] > bestScore[0]:
-              best = ss[0]
+            percents[annotation[i]] += block[i]
+        if percents["JUNK"] < 0.166 or (max(percents.values())):
+            ss = [(x,y) for y,x in percents.items()]
+            ss.sort(reverse=True)
+            if ss[0][1] != "JUNK" and ss[0][0] > best[0]:
+                best = ss[0]
 			
 
-	correct = os.path.basename(os.path.dirname(f))
+        correct = os.path.basename(os.path.dirname(f))
 
 
-	confusion[best[1]][correct] += 1
-	print(f)
+    confusion[best[1]][correct] += 1
+    print(f)
     print(best)
 
 
