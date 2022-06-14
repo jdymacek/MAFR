@@ -4,8 +4,8 @@ import random
 import MAFR
 
 annotationFile = "/scratch/prism2022data/annotations.txt"
-outDir = "training"
-srcDir = "/scratch/prism2022data/"
+outDir = "/scratch/prism2022data/newInverseBigBlocks"
+srcDir = "/scratch/prism2022data/trainingTwoInverse/"
 
 annotations = []
 with open(annotationFile) as csvFile:
@@ -14,8 +14,8 @@ with open(annotationFile) as csvFile:
 		annotations += [(line[0],int(y)) for y in line[1:] if y != ""]
 
 
-#classes = ["AMRE","BBWA","BTBW","COYE","OVEN"]
-classes = ["BBWA"]
+classes = ["AMRE","BBWA","BTBW","COYE","OVEN"]
+#classes = ["BBWA"]
 
 for species in classes:
 	bigblocks = []

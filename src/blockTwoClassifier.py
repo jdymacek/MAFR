@@ -5,6 +5,7 @@ import os
 import json
 import statistics
 import random
+import csv
 from sklearn import decomposition
 from scipy.stats import norm
 
@@ -21,13 +22,29 @@ patternFile = args.p
 tstDirectory = args.t
 annotationFile = args.a
 
+annotationDict = {}
+lines = []
+with open(annotationFile) as data:
+    for line in csv.reader(data,  delimiter="\t"):
+        lines.append(line)
+
+data.close()
+
+for l in lines:
+    key = l[0][14:]
+    key = key[:-4] + "_inverse.png"
+#print(key)
+    annotationDict[key] = []
+    for i in range(1,len(l)):
+        annotationDict[key].append(l[i])
+
 tstClasses   = next(os.walk(tstDirectory))[1]
 tstClasses += ["JUNK"]
 tstClasses = sorted(tstClasses)
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
-samples = random.choice(allFiles, 12)
-
+#samples = random.sample(allFiles, 12)
+samples = allFiles
 blockSize = MAFR.getBlocksize(patternFile)
 
 img = MAFR.loadImage(allFiles[0], blockSize)
@@ -42,33 +59,47 @@ model.components_ = patterns
 confusion = { x : {y: 0 for y in tstClasses} for x in tstClasses }
 
 
+counter = 0
 for f in samples:
-	img = MAFR.loadImage(f, 16)
-	mat = MAFR.imageToMatrix(img, 16)
-	W = model.transform(mat)
+    slashIndex = f.rfind("/") + 1
+    fileName = f[slashIndex:]
+    if fileName not in  annotationDict:
+        counter += 1
+print(counter)
+quit()
+for f in samples:
+    img = MAFR.loadImage(f, 16)
+    mat = MAFR.imageToMatrix(img, 16)
+    W = model.transform(mat)
+    slashIndex = f.rfind("/") + 1
+    fileName = f[slashIndex:]
 
+    correct = os.path.basename(os.path.dirname(f))
 
     headers = ""
     for c in tstClasses:
         headers = headers + c + "\t"
     headers += "class"
 
-    outName = f[:-3] + "csv"
-    out = f.open(outName, "w")
-    out.write(headers)
+    outName = fileName[:-3] + "csv"
+    with open(outName, "w") as out:
+        out.write(headers)
 
-	for index, block in enumerate(W):
-		percents = {k : 0 for k in tstClasses}
-		
-		block = block/ np.sum(block)
-		for i in range(0,len(annotation)):
-			percents[annotation[i]] += block[i]
+        for index, block in enumerate(W):
+            percents = {k : 0 for k in tstClasses}
+            block = block/ np.sum(block)
+            for i in range(0,len(annotation)):
+                percents[annotation[i]] += block[i]
+                line = ""
+            for v in percents.values():
+                line += str(v) + "\t"
+            if str(index) in annotationDict[fileName]:
+                line += correct
+            else:
+                line += "JUNK"
 
-        line = ""
-        for v in percents.values():
-            line += v + "\t"
-        out.write(line)
+            out.write(line)
+
 
     out.close()
-	correct = os.path.basename(os.path.dirname(f))
 

@@ -7,7 +7,7 @@ from sklearn import decomposition
 import PIL
 
 
-TRAINING = "/scratch/prism2022data/training_inverse"
+TRAINING = "/scratch/prism2022data/training"
 
 parser = argparse.ArgumentParser("Tool to get n random blocks from training")
 parser.add_argument("-b", required=True, help="Number of blocks to extract")
@@ -31,5 +31,5 @@ print(M.shape)
 
 model = decomposition.NMF(n_components=blocks, init="random", random_state=0, max_iter=10000, solver="mu")
 model.fit_transform(M)
-img = MAFR.matrixToImage(M, 16)
-img.save("bigJunk.png")
+img = MAFR.matrixToImage(M, 16, 16)
+img.save("/scratch/prism2022data/newBigBlocks/JUNK/JUNK_annotatedBlock.png")
