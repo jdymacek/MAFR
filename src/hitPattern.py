@@ -33,11 +33,14 @@ currEstim.fit(matrices["AMRE"])
 
 annotation = []
 ml = []
+rows = {x:random.sample(range(0,256), k=2*PATTERNS) for x in classes}
 currentPatterns = {k:"" for k in classes}
 model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
 for k,v in matrices.items():
-    np.random.shuffle(v)
-    population = v[:PATTERNS*2]
+    #np.random.shuffle(v)
+    #population = v[:PATTERNS*2]
+    ll = [v[x] for x in rows[k]]
+    population = np.concatenate(ll)
     model.fit_transform(population)
     currentPatterns[k] = model.components_
     ml += [model.components_]
@@ -80,8 +83,8 @@ while(currentTemp > finalTemp):
 
     neighborPatterns = currentPatterns
     toChange = random.choice(classes)
-    np.random.shuffle(matrices[toChange])
-    newBlocks = matrices[toChange][:2*PATTERNS]
+    #np.random.shuffle(matrices[toChange])
+    newBlocks = matrices[toChange][rows[toChange]]
     model.fit_transform(newBlocks)
     neighborPatterns[toChange] = model.components_
 
