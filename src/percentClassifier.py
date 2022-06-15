@@ -51,7 +51,7 @@ for f in allFiles:
 
         for i in range(0,len(annotation)):
             percents[annotation[i]] += block[i]
-        if percents["JUNK"] < 0.166 or (max(percents.values())):
+        if percents["JUNK"] < 0.2 or (max(percents.values()) > 0.3):
             ss = [(x,y) for y,x in percents.items()]
             ss.sort(reverse=True)
             if ss[0][1] != "JUNK" and ss[0][0] > best[0]:

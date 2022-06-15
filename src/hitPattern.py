@@ -10,11 +10,12 @@ from sklearn import decomposition
 
 
 BLOCKSIZE = 16
-PATTERNS = 40
+PATTERNS = 16
 PATH = "/scratch/prism2022data/annotatedDir/"
 
 classes = next(os.walk(PATH))[1]
 classes = sorted(classes)
+classes.remove(".JUNK")
 
 paths = {k:"" for k in classes}
 
@@ -33,13 +34,16 @@ currEstim.fit(matrices["AMRE"])
 
 annotation = []
 ml = []
-rows = {x:random.sample(range(0,256), k=2*PATTERNS) for x in classes}
+
+rows = {x:random.sample(range(0,256), 2*PATTERNS) for x in classes}
+
 currentPatterns = {k:"" for k in classes}
 model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
 for k,v in matrices.items():
     #np.random.shuffle(v)
     #population = v[:PATTERNS*2]
-    ll = [v[x] for x in rows[k]]
+    ll = [[v[x]] for x in rows[k]]
+#print(ll)
     population = np.concatenate(ll)
     model.fit_transform(population)
     currentPatterns[k] = model.components_
@@ -81,9 +85,17 @@ currentTemp = initialTemp
 
 while(currentTemp > finalTemp):
 
+    changeVal = 2*PATTERNS//4
     neighborPatterns = currentPatterns
     toChange = random.choice(classes)
+    random.shuffle(rows[toChange])
+    rows[toChange] = rows[toChange][changeVal:]
+    while len(rows[toChange]) < 2*PATTERNS:
+        r = random.randint(0,255)
+        if r not in rows[toChange]:
+            rows[toChange].append(r)
     #np.random.shuffle(matrices[toChange])
+    #rows[toChange] = random.sample(range(0,256), 2*PATTERNS)
     newBlocks = matrices[toChange][rows[toChange]]
     model.fit_transform(newBlocks)
     neighborPatterns[toChange] = model.components_
