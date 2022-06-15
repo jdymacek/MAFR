@@ -16,14 +16,14 @@ for f in ann:
     inverseName = filename.replace(".png", "_inverse.png")
     if s in species:
         inverseDir = "/scratch/prism2022data/" + species[s] + "/"
-        newFile = "/scratch/prism2022data/training_inverse/" + s + "/" + filename
+        newFile = "/scratch/prism2022data/trainingTwoInverse/" + s + "/" + filename
         os.system("cp " + inverseDir + inverseName + " " + newFile)
-        used.append(filename)
+        used.append(inverseName)
 
-dest = "/scratch/prism2022data/testing_inverse/"
+dest = "/scratch/prism2022data/testingTwoInverse/"
 
 for k, v in species.items():
   for f in os.listdir("/scratch/prism2022data/" + v):
     if f not in used:
       newFile = f.replace("_inverse.png", ".png")
-      os.system("cp /scratch/prism2022data/" + v + " " + dest + k + newFile
+      os.system("cp /scratch/prism2022data/" + v + "/" + f + " " + dest + k + "/" + newFile)

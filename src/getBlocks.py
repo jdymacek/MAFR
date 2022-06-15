@@ -7,16 +7,18 @@ from sklearn import decomposition
 import PIL
 
 
-TRAINING = "/scratch/prism2022data/training"
 
 parser = argparse.ArgumentParser("Tool to get n random blocks from training")
 parser.add_argument("-b", required=True, help="Number of blocks to extract")
+parser.add_argument("-d", required=True, help="directory to read and save to")
 
 args = parser.parse_args()
 
 blocks = int(args.b)
 
-files = [x[0] + "/" + y for x in os.walk(TRAINING) for y in x[2] if y.endswith(".png")]
+PATH = "/scratch/prism2022data/data/" + args.d + "/" 
+
+files = [x[0] + "/" + y for x in os.walk(PATH+"training") for y in x[2] if y.endswith(".png")]
 
 
 ml = []
@@ -32,4 +34,4 @@ print(M.shape)
 model = decomposition.NMF(n_components=blocks, init="random", random_state=0, max_iter=10000, solver="mu")
 model.fit_transform(M)
 img = MAFR.matrixToImage(M, 16, 16)
-img.save("/scratch/prism2022data/newBigBlocks/JUNK/JUNK_annotatedBlock.png")
+img.save(PATH + "bigBlocks/JUNK/JUNK_annotatedBlock.png")

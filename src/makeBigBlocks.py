@@ -3,9 +3,9 @@ import numpy as np
 import random
 import MAFR
 
-annotationFile = "/scratch/prism2022data/annotations.txt"
-outDir = "/scratch/prism2022data/newInverseBigBlocks"
-srcDir = "/scratch/prism2022data/trainingTwoInverse/"
+annotationFile = "/scratch/prism2022data/data/reducedNoise/annotations.txt"
+outDir = "/scratch/prism2022data/data/reducedNoise/bigBlocks"
+srcDir = "/scratch/prism2022data/data/reducedNoise/training/"
 
 annotations = []
 with open(annotationFile) as csvFile:

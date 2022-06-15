@@ -37,8 +37,9 @@ for l in lines:
     for i in range(1,len(l)):
         annotationDict[key].append(l[i])
 
-tstClasses   = next(os.walk(tstDirectory))[1]
-tstClasses += ["JUNK"]
+#tstClasses   = next(os.walk(tstDirectory))[1]
+#tstClasses += ["JUNK"]
+tstClasses = MAFR.getClasses(tstDirectory)
 tstClasses = sorted(tstClasses)
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
