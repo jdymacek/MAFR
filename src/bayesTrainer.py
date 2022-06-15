@@ -41,25 +41,27 @@ averageWinners = {x : (0,0) for x in tstClasses}
 
 histogram = {x : {y: [] for y in tstClasses} for x in tstClasses}
 classInfo = {x : 0 for x in tstClasses}
-
 overall = {x : [] for x in tstClasses}
 for f in allFiles:
 	img = MAFR.loadImage(f, 16)
 	mat = MAFR.imageToMatrix(img, 16)
 	W = model.transform(mat)
-
 	hits = {k : 0 for k in tstClasses}	
 
+	print(f)
 	for block in W:
 		percents = {k : 0 for k in tstClasses+["JUNK"]}
-		
-		block = block/ np.sum(block)
-		for i in range(0,len(annotation)):
-			percents[annotation[i]] += block[i]
-		ss = [(x,y) for y,x in percents.items()]
-		ss.sort(reverse=True)
-		if ss[0][1] != "JUNK":
-			hits[ss[0][1]] += 1
+		block = np.round_(block, decimals=10)
+		val = np.sum(block)
+		if val > 0:
+			
+			block = block/ np.sum(block)
+			for i in range(0,len(annotation)):
+				percents[annotation[i]] += block[i]
+			ss = [(x,y) for y,x in percents.items()]
+			ss.sort(reverse=True)
+			if ss[0][1] != "JUNK":
+				hits[ss[0][1]] += 1
 
 	print(hits)
 	correct = os.path.basename(os.path.dirname(f))

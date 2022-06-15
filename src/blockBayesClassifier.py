@@ -59,14 +59,16 @@ for f in allFiles:
 
 	for block in W:
 		percents = {k : 0 for k in tstClasses+["JUNK"]}
-		
-		block = block/ np.sum(block)
-		for i in range(0,len(annotation)):
-			percents[annotation[i]] += block[i]
-		ss = [(x,y) for y,x in percents.items()]
-		ss.sort(reverse=True)
-		if ss[0][1] != "JUNK":
-			hits[ss[0][1]] += 1
+		block = np.round_(block, decimals =10)
+		val = np.sum(block)
+		if  val > 0:
+			block = block/ val
+			for i in range(0,len(annotation)):
+				percents[annotation[i]] += block[i]
+			ss = [(x,y) for y,x in percents.items()]
+			ss.sort(reverse=True)
+			if ss[0][1] != "JUNK":
+				hits[ss[0][1]] += 1
 
 	correct = os.path.basename(os.path.dirname(f))
 

@@ -11,6 +11,7 @@ import argparse
 
 BLOCKSIZE = 16
 PATTERNS = 40
+SAMPLES = 3*PATTERNS
 PATH = "/scratch/prism2022data/data/"
 
 parser = argparse.ArgumentParser()
@@ -32,7 +33,7 @@ currEstim.fit(matrices["AMRE"])
 annotation = []
 ml = []
 
-rows = {x:random.sample(range(0,256), 2*PATTERNS) for x in classes}
+rows = {x:random.sample(range(0,256), SAMPLES) for x in classes}
 
 currentPatterns = {k:"" for k in classes}
 model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=10000, solver="mu")
@@ -67,7 +68,7 @@ def calcScore(state):
         print(hits)
         total += hits[correct]
     currentScore = 1 - (total/(len(classes)*256))
-    return currentScore * 1000
+    return currentScore * 100
 
 
 currentState = np.concatenate(ml)
@@ -82,12 +83,12 @@ currentTemp = initialTemp
 
 while(currentTemp > finalTemp):
 
-    changeVal = 2*PATTERNS//10
+    changeVal = SAMPLES//2
     neighborPatterns = currentPatterns
     toChange = random.choice(classes)
     random.shuffle(rows[toChange])
     rows[toChange] = rows[toChange][changeVal:]
-    while len(rows[toChange]) < 2*PATTERNS:
+    while len(rows[toChange]) < SAMPLES:
         r = random.randint(0,255)
         if r not in rows[toChange]:
             rows[toChange].append(r)
