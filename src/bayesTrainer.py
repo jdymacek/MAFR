@@ -17,7 +17,7 @@ patternFile = args.p
 
 tstDirectory = args.t
 
-tstClasses   = next(os.walk(tstDirectory))[1]
+tstClasses   = MAFR.getClasses(tstDirectory)
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
 
 blockSize = MAFR.getBlocksize(patternFile)

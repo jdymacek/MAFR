@@ -10,7 +10,7 @@ import argparse
 
 
 BLOCKSIZE = 16
-PATTERNS = 16
+PATTERNS = 40
 PATH = "/scratch/prism2022data/data/"
 
 parser = argparse.ArgumentParser()
@@ -82,7 +82,7 @@ currentTemp = initialTemp
 
 while(currentTemp > finalTemp):
 
-    changeVal = 2*PATTERNS//4
+    changeVal = 2*PATTERNS//10
     neighborPatterns = currentPatterns
     toChange = random.choice(classes)
     random.shuffle(rows[toChange])
