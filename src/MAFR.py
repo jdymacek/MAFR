@@ -408,3 +408,9 @@ def getPatterns(mat_file):
   prev = f.read(6)
   size = f.read(2)
   return int.from_bytes(size, byteorder='little')
+
+def getClasses(directory):
+  classes = next(os.walk(directory))[1]
+  classes = list(filter(lambda x:len(x)==4, classes))
+  classes = sorted(classes)
+  return classes 
