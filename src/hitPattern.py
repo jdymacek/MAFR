@@ -6,28 +6,25 @@ import os
 import random
 import math
 from sklearn import decomposition
-
+import argparse
 
 
 BLOCKSIZE = 16
 PATTERNS = 16
-PATH = "/scratch/prism2022data/annotatedDir/"
+PATH = "/scratch/prism2022data/data/"
 
-classes = next(os.walk(PATH))[1]
-classes = sorted(classes)
-classes.remove(".JUNK")
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', help='directory')
+args = parser.parse_args()
 
-paths = {k:"" for k in classes}
+PATH+=args.d
 
-for c in classes:
-    paths[c] = PATH + c + "/" + c + "_annotatedBlock.png"
+classes = MAFR.getClasses(PATH+'/bigBlocks')
 
+paths = {k: PATH+'/bigBlocks/'+k+'/'+k+'_annotatedBlock.png' for k in classes}
 # open each big block as matrix:
 
-matrices = {k:"" for k in classes}
-for c in classes:
-    matrices[c] = MAFR.imageToMatrix(MAFR.loadImage(paths[c], BLOCKSIZE), BLOCKSIZE)
-
+matrices = {m: MAFR.imageToMatrix(MAFR.loadImage(paths[m], BLOCKSIZE), BLOCKSIZE) for m in classes}
 
 currEstim = decomposition.NMF(n_components=PATTERNS*len(classes), init="random", random_state=0, max_iter=10000, solver="mu")
 currEstim.fit(matrices["AMRE"])
