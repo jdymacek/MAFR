@@ -48,8 +48,8 @@ def matrixToImage(tiles, width, height):
                 for x in range(width):
                         tile = tiles[index]
 
-                        tile = tile/np.max(tile)
-                        tile = tile*255
+#tile = tile/np.max(tile)
+#                       tile = tile*255
 
                         tile = np.clip(np.rint(tile),a_min=0, a_max=255)
                         tile = tile.astype(np.uint8)
