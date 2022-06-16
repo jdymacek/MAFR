@@ -69,21 +69,19 @@ def merge_chars(a,b):
   return c
 
 ###
-def saveMatrix(matrix, patterns, block_size, species_code, out=os.getcwd()):
+def saveMatrix(matrix, patterns, width, height, out=os.getcwd()):
 
 
-  species_first = merge_chars(species_code[1], species_code[0])
-  species_last = merge_chars(species_code[3], species_code[2])
 
   header = np.ndarray(8, dtype=np.uint16)
   header[0] = 19790
   header[1] = 20550
   header[2] = 2049
   header[3] = patterns
-  header[4] = block_size
-  header[5] = block_size
-  header[6] = species_first
-  header[7] = species_last
+  header[4] = width
+  header[5] = height
+  header[6] = 0
+  header[7] = 0
 
 #file_bytes = []
 #for row in matrix:
@@ -97,12 +95,12 @@ def saveMatrix(matrix, patterns, block_size, species_code, out=os.getcwd()):
   dir_list = os.listdir(out)
 
   new_file = ''
-  filename = out + '/' + species_code + '-' + str(00).zfill(2) + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
+  filename = out + '/' + "please" + '-' + str(00).zfill(2) + '+' + str(width) + '+' + str(height) + '+' + str(patterns) + '.nmf'
   counter = 0
   while(1):
     if os.path.exists(filename):
       counter += 1
-      filename = out + '/' + species_code + '-' + str(counter).zfill(2) + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
+      filename = out + '/' + "please" + '-' + str(counter).zfill(2) + '+' + str(width) + '+' + str(height) + '+' + str(patterns) + '.nmf'
     else:
       break
 
