@@ -21,7 +21,7 @@ WIDTH= int(patternFile.split("+")[-3])
 
 CSV = "test.csv"
 tstDirectory = PATH + args.d
-print(tstDirectory)
+#print(tstDirectory)
 lines = []
 with open(CSV) as data:
     for line in csv.reader(data,  delimiter=","):
@@ -67,10 +67,10 @@ for f in allFiles:
 #print(confusion)
 
 correct = {k:confusion[k][k] for k in tstClasses}
-print(correct)
+#print(correct)
 
 correctGuesses = sum(correct.values())
 parameters = {"Patterns": len(patterns), "Removed": 256 - HEIGHT, "Correct":correctGuesses, "Percent": correctGuesses / len(allFiles)}
-print("PARAMETERS")
+#print("PARAMETERS")
 print(parameters)
 #print(sum(correct.values()))
