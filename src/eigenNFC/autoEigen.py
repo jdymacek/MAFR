@@ -6,12 +6,9 @@ PATTERNS = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64]
 
 csv = open("results.csv", "w")
 csv.write("PATTERNS,REMOVED,CORRECT,PERCENT\n")
-i = 0
+
 for r in REMOVE:
     for p in PATTERNS:
-        if i >= 3:
-            csv.close()
-            quit()
         line = ""
         os.system(f"python3 eigenTrain.py -t /scratch/prism2022data/data/reducedNoise/training -r {r} -p {p}")
         patternName = f"please-00+96+{256-r}+{p}.nmf"
@@ -34,3 +31,4 @@ for r in REMOVE:
         os.system(f"rm {patternName}")
         i += 1
 
+csv.close()
