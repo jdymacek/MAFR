@@ -21,8 +21,16 @@ tstDirectory = args.t
 PATTERNS = int(args.p)
 HEIGHT = 256 - int(args.r)
 
+"""
+dirs = os.listdir(tstDirectory)
+dirs  = [x for x in dirs if len(x) == 4]
+print(dirs)
+allFiles = [tstDirectory + "/" + 
+"""
 
-allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
+#allFiles = [os.path.basename(x[0])  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
+allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
+#print(allFiles)
 
 ml = []
 labels = []

@@ -31,7 +31,8 @@ entries = []
 for line in lines:
   entries.append((line[0], line[1:]))
 
-allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
+allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
+
 tstClasses = MAFR.getClasses(tstDirectory)
 
 patterns, labels = MAFR.loadMatrix(patternFile)
