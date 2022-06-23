@@ -4,8 +4,7 @@ This document explains the process of the programs identifying and classifying p
 
 ### If the user is starting over from scratch, they would first have to extract the .wav files from the .h5 files:
 
-1. extract5.py does this by taking in a .h5 file, extarcting the .wav files, and storing those files in a
-seperate directory labeled by their taxonomy code.
+1. extract5.py does this by taking in a .h5 file, extarcting the .wav files, and storing those files in a seperate directory labeled by their taxonomy code.
 
 *EXAMPLE*: python3 extract5.py BirdVox-14SD_1-4-1_original.h5
 
@@ -22,22 +21,23 @@ This program utilizes Sound eXchange(SoX), a sound processing program, to do thi
 
 
 
-### To make the signal stronger and the noise less prevelant, we applied multiple filtering methods.
+### To make the signal stronger and the noise less prevalent, we applied multiple filtering methods.
 
-3. simpleFilter.py takes in a directory of wav files and reduces the noise on every file. After the noise
+3. simpleFilter.py takes in a directory of .wav files and reduces the noise on every file. After the noise
 reduction, the new images are stored in a new directory labeled "reducedNoise".
 
-*EXAMPLE*: python3 simpleFilter.py audioDirectory 
+*EXAMPLE*: python3 simpleFilter.py -t audioDirectory 
 
-4. blur
-5. average
+4. blur.py 
+5. averageNFC.py takes in a directory of .wav files. It groups the .wav files in twos then takes the average of both, producing a new image from the result and moving it into a new directory.
 
+*EXAMPLE*: python3 averageNFC.py -t wavDirectory
 
 
 
 ### The user can create a training and testing set with the audio files. 
 
-6. splitSets.py takes in a directory of audio files and splits it based on the percentage the user provides as a float. The program will create a training and testing directory named after the speceis the audios belong to.
+6. splitSets.py takes in a directory of audio files and splits it based on the percentage the user provides as a float. The program will create a training and testing directory named after the species the audios belong to.
 
 *EXAMPLE*: python3 splitSets.py audioDirectory speciesName customPercent
 
@@ -55,7 +55,7 @@ reduction, the new images are stored in a new directory labeled "reducedNoise".
 
 ### For classification, it will use the testing set and the created pattern file from training the training set. 
 
-8. eigenClassify.py takes in the testing directory and a pattern file.
+8. eigenClassify.py takes in the testing directory and a pattern file. It utilizes a confusion matrix to examine the likelihood that the given file is a particular species. Since it keeps tracks of this for every file, it then returns the score of how many files it guessed correctly.
 
 *EXAMPLE*: python3 eigenClassify.py -p patternFile -d testingDirectory
 
