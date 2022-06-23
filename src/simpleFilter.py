@@ -19,7 +19,7 @@ tstClasses   = next(os.walk(tstDirectory))[1]
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
 
 tokens = tstDirectory.split("/")
-outPath = "/scratch/prism2022data/reducedNoise/" + tokens[-1]
+outPath = "/scratch/prism2022data/data/reducedFromBoth/" + tokens[-1]
 
 blocksize=16
 for f in allFiles:
@@ -36,12 +36,18 @@ for f in allFiles:
     firstThird = m[i*16:(i*16)+5]
     noiseAvg = [(sum(col)//len(col)) for col in zip(*firstThird)]
     for j in range(i*16, (i+1)*16):
+      m[j] = list(map(lambda x,y: 0 if y>x else min((x-y),255) , m[j], noiseAvg))
+
+  for i in range(0,16):  
+    lastThird = m[(i*16)+11:(i+1)*16]
+    noiseAvg = [(sum(col)//len(col)) for col in zip(*lastThird)]
+    for j in range(i*16, (i+1)*16):
       m[j] = list(map(lambda x,y: 0 if y>x else min((x-y)*3,255) , m[j], noiseAvg))
 #print(m) 
   print(f)
   newM = MAFR.matrixToImage(m,blocksize, blocksize) 
   newM.save(outPath)  
-  outPath = "/scratch/prism2022data/reducedNoise/" + tokens[-1]
+  outPath = "/scratch/prism2022data/data/reducedFromBoth/" + tokens[-1]
 quit()  
     
     

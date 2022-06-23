@@ -7,7 +7,7 @@ import argparse
 import os
 from sklearn import decomposition
 import time
-import argparse
+import random
 
 
 parser = argparse.ArgumentParser(description='Convert an image to a vector')

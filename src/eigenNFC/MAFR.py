@@ -108,6 +108,7 @@ def saveMatrix(matrix, patterns, width, height, out=os.getcwd()):
   f.write(header)
   f.write(byte_array)
   f.close()
+  return filename
 
 ### matrixList = list of original .nmf pattern files 
 '''
