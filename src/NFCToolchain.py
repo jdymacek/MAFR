@@ -18,6 +18,7 @@ for wavDir in wavDirs
 
   os.system("python3 wavToPng.py -d " + wavDir)
 
+#next we have to split sets since filtering relies on that they're aready split up
 #now call the filtering stuff
 #first, reduce noise
 

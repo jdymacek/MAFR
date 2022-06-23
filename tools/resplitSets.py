@@ -1,7 +1,7 @@
 import os
 import csv
 
-species = {"AMRE":"1-4-1_inverse", "BBWA":"1-4-2_inverse", "BTBW":"1-4-3_inverse", "COYE":"1-4-5_inverse", "OVEN":"1-4-7_inverse"}
+species = {"CHSP":"1-1-2", "SAVS":"1-1-3", "AMRE":"1-4-1", "BBWA":"1-4-2", "BTBW":"1-4-3", "COYE":"1-4-5", "OVEN":"1-4-7"}
 classes = species.keys()
 
 annotations = open("/scratch/prism2022data/annotations.txt", "r")
