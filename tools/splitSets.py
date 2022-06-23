@@ -1,4 +1,3 @@
-#splitSets.py -- This program splits up a directory of spectrograms into our training and testing sets
 import sys
 import array
 import random
@@ -18,10 +17,11 @@ dirPath = os.path.join(os.path.dirname(filePath), dirName)
 file_list = os.listdir(dirPath)
 random_list = []
 i=0
+#need to add on that it has to be in annotations, so we know teres a signal there
 for filename in file_list:
      if filename.endswith(".png"):
-        random_list.insert(i, filename)
-        i+=1
+          random_list.insert(i, filename)
+          i+=1
      else:
         continue
 
@@ -50,4 +50,5 @@ while j < i:
     k+=1
 print(k)
 
-
+shutil.copy(fname_path, "testing")
+shutil.copy(fname_path, "training")

@@ -12,13 +12,22 @@ for hFile in hFiles:
 
 #now call wavToPNG
 wavDirs = os.listdir(os.cwd())
-for wavDir in wavDirs
+for wavDir in wavDirs:
   if "Bird" in wavDir:
     continue
 
   os.system("python3 wavToPng.py -d " + wavDir)
 
 #next we have to split sets since filtering relies on that they're aready split up
+species = {"1-1-2":"CHSP", "1-1-3":"SAVS", "1-4-1":"AMRE", "1-4-2":"BBWA", "1-4-3":"BTBW", "1-4-5":"COYE", "1-4-7":"OVEN"}
+classes = species.keys()
+
+for wavDir in wavDirs:
+  if "Bird" in wavDir:
+    continue
+
+  os.system("python3 splitSets.py " +wavDir + " " + species[wavDir]+ " 0.6")
+
 #now call the filtering stuff
 #first, reduce noise
 
