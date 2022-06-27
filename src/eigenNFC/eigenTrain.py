@@ -14,12 +14,14 @@ parser = argparse.ArgumentParser(description='Convert an image to a vector')
 parser.add_argument('-t', help='training directory')
 parser.add_argument('-p', help = 'number of patterns')
 parser.add_argument('-r', help = 'clip r pixels from bottom of images')
+parser.add_argument('-w', help = 'width')
 
 args = parser.parse_args()
 
 tstDirectory = args.t
 PATTERNS = int(args.p)
 HEIGHT = 256 - int(args.r)
+WIDTH = int(args.w)
 
 """
 dirs = os.listdir(tstDirectory)
@@ -36,7 +38,7 @@ ml = []
 labels = []
 for f in allFiles:
     labels.append(f.split("/")[-2])
-    arr = eigenNFC.imageToVector(f, x=72, y=0, width=96, height=HEIGHT)
+    arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
     ml += [[arr]]
 
 M = np.concatenate(ml)
@@ -57,5 +59,5 @@ print(f"ESTIMATED ERROR 1: {model.reconstruction_err_}")
 print(f"ITERATIONS: {model.n_iter_}")
 print(f"TIME TO FIND PATTERNS: {time.time() - t0}")
 
-MAFR.saveMatrix(h, PATTERNS, 96, HEIGHT) 
+MAFR.saveMatrix(h, PATTERNS, WIDTH, HEIGHT) 
 

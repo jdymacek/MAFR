@@ -13,6 +13,7 @@ PATH = "/scratch/prism2022data/data/"
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", help="patternfile")
 parser.add_argument("-d", help="directory to classify (relative to /scratch/prism2022data/data")
+parser.add_argument("-w", help="CSV file with coefficients")
 
 args = parser.parse_args()
 patternFile = args.p
@@ -20,7 +21,7 @@ patternFile = args.p
 HEIGHT= int(patternFile.split("+")[-2])
 WIDTH= int(patternFile.split("+")[-3])
 
-CSV = "weights.csv"
+CSV = args.w
 tstDirectory = PATH + args.d
 #print(tstDirectory)
 lines = []

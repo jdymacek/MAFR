@@ -16,12 +16,14 @@ parser = argparse.ArgumentParser(description='Convert an image to a vector')
 parser.add_argument('-t', help='training directory')
 parser.add_argument('-p', help = 'number of patterns')
 parser.add_argument('-r', help = 'clip r pixels from bottom of images')
+parser.add_argument('-w', help = 'width of image area')
 
 args = parser.parse_args()
 
 tstDirectory = args.t
 PATTERNS = int(args.p)
 HEIGHT = 256 - int(args.r)
+width = int(args.w)
 
 """
 dirs = os.listdir(tstDirectory)
@@ -30,7 +32,7 @@ print(dirs)
 allFiles = [tstDirectory + "/" + 
 """
 
-classifier = EigenClassifier(MAFR.getClasses(tstDirectory), PATTERNS, 96, HEIGHT) 
+classifier = EigenClassifier(MAFR.getClasses(tstDirectory), PATTERNS, width, HEIGHT) 
 #allFiles = [os.path.basename(x[0])  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
 #print(allFiles)
@@ -49,7 +51,7 @@ bestAccuracy = currentAccuracy
 bestPatterns = currentPatterns
 bestWeights = currentWeights
 
-temp = 5
+temp = 20
 alpha = 0.1
 finalTemp = 0.1
 
@@ -64,7 +66,7 @@ while temp > finalTemp:
   labels = []
   for f in training:
     labels.append(f.split("/")[-2])
-    arr = eigenNFC.imageToVector(f, x=72, y=0, width=96, height=HEIGHT)
+    arr = eigenNFC.imageToVector(f, x=(256/width)//2, y=0, width=width, height=HEIGHT)
     ml += [[arr]]
 
   M = np.concatenate(ml)
@@ -100,9 +102,10 @@ while temp > finalTemp:
 
   temp -= alpha 
 
-file = MAFR.saveMatrix(bestPatterns, PATTERNS, 96, HEIGHT) 
+file = MAFR.saveMatrix(bestPatterns, PATTERNS, width, HEIGHT) 
 
-weights = open("weights.csv", "w")
+weightName = str(PATTERNS) + "+" + str(args.r) + ".csv"
+weights = open(weightName, "w")
 for idx, row in enumerate(bestWeights):
   rounded = [np.round(x, decimals=5) for x in row[1]]
   line = row[0] +"," +  ",".join(map(str, rounded)) + "\n"
