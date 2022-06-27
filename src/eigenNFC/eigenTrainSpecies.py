@@ -25,14 +25,25 @@ WIDTH = int(args.w)
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
 tstClasses = MAFR.getClasses(tstDirectory)
-ml = []
 labels = []
-
+patterns = []
 for species in tstClasses:
     speciesModel = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=30000, solver="mu")
     speciesFiles = [x[0] + "/" + y for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and os.path.basename(x[0]) == species]
-    print(species)
-    print(speciesFiles[:5])
+
+    ml = []
+    for f in speciesFiles:
+        labels.append(species)
+        arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
+        ml += [[arr]]
+    M = np.concatenate(ml)
+
+    W = speciesModel.fit_transform(M)
+    patterns += speciesModel.components_
+
+bigPattern = np.concatenate(patterns)
+print(bigPattern.shape)
+
 """
 for f in allFiles:
     labels.append(f.split("/")[-2])
