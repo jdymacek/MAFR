@@ -21,7 +21,7 @@ args = parser.parse_args()
 patternFile = args.p
 HEIGHT= int(patternFile.split("+")[-2])
 WIDTH= int(patternFile.split("+")[-3])
-PATTERN_NUM = int(patternFile.split("+")[-1][:-4])
+PATTERN_NUM = int(patternFile.split("+")[-1][:-4]) * 7
 CSV = args.w
 
 tstDirectory = PATH + args.d

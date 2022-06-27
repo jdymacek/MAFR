@@ -251,7 +251,7 @@ def loadMatrix(mat_file):
 
       byte_arr = f.read()
       a = np.frombuffer(byte_arr, dtype=np.double)
-      matrix = a.reshape(pat, wid*ht)
+      matrix = a.reshape(7*pat, wid*ht)
 
       rowLabels = []
       for i in range(pat):

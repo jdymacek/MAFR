@@ -30,7 +30,6 @@ patterns = []
 
 fileList = []
 for f in allFiles:
-    labels.append(f.split("/")[-2])
     arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
     fileList += [[arr]]
 
@@ -42,7 +41,7 @@ for species in tstClasses:
 
     ml = []
     for f in speciesFiles:
-        labels.append(f)
+        labels.append(f.split("/")[-2] + "/" + f.split("/")[-1])
         arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
         ml += [[arr]]
     M = np.concatenate(ml)
@@ -51,16 +50,17 @@ for species in tstClasses:
     patterns += [speciesModel.components_]
 
 bigPattern = np.concatenate(patterns)
+print(bigPattern.shape)
 
 MAFR.saveMatrix(bigPattern, PATTERNS, WIDTH, HEIGHT)
 
 model = decomposition.NMF(n_components=len(bigPattern), init="random", random_state=0, max_iter=30000, solver="mu")
-ones = [np.ones(WIDTH,HEIGHT)]
+ones = [np.ones(WIDTH*HEIGHT)]
 temp = model.fit(ones)
 model.components_ = bigPattern
 coefficients = model.transform(fileMatrix)
 
-filename = str(PATTERNS) + "+" + str(WIDTH) + "+" + str(HEIGHT) + ".nmf"
+filename = str(PATTERNS) + "+" + str(WIDTH) + "+" + str(HEIGHT) + ".csv"
 out = open(filename, "w")
 for index, row in enumerate(coefficients):
     line = labels[index]
