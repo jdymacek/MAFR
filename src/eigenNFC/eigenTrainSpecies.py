@@ -47,6 +47,7 @@ for species in tstClasses:
     M = np.concatenate(ml)
 
     W = speciesModel.fit_transform(M)
+    print(f"{species}: {speciesModel.reconstruction_err_}")
     patterns += [speciesModel.components_]
 
 bigPattern = np.concatenate(patterns)
@@ -59,31 +60,12 @@ ones = [np.ones(WIDTH*HEIGHT)]
 temp = model.fit_transform(fileMatrix)
 model.components_ = bigPattern
 coefficients = model.transform(fileMatrix)
+print(f"ERROR: {model.reconstruction_err_}")
 
-filename = str(PATTERNS) + "+" + str(WIDTH) + "+" + str(HEIGHT) + ".csv"
+filename = str(len(tstClasses) * PATTERNS) + "+" + str(WIDTH) + "+" + str(HEIGHT) + ".csv"
 out = open(filename, "w")
 for index, row in enumerate(coefficients):
     line = labels[index]
     for val in row:
         line += "," + str(np.round(val, decimals=7))
     out.write(line + "\n")
-
-"""
-for f in allFiles:
-    labels.append(f.split("/")[-2])
-    arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
-    ml += [[arr]]
-
-M = np.concatenate(ml)
-
-t0 = time.time()
-model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=30000, solver="mu")
-w = model.fit_transform(M)
-
-out = open("test.csv", "w")
-for index, row in enumerate(w):
-    line = labels[index]
-    for val in row:
-        line += "," + str(np.round(val, decimals=7))
-    out.write(line + "\n")
-"""
