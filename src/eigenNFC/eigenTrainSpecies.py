@@ -52,11 +52,11 @@ for species in tstClasses:
 bigPattern = np.concatenate(patterns)
 print(bigPattern.shape)
 
-MAFR.saveMatrix(bigPattern, PATTERNS, WIDTH, HEIGHT)
+MAFR.saveMatrix(bigPattern, len(tstClasses) * PATTERNS, WIDTH, HEIGHT)
 
 model = decomposition.NMF(n_components=len(bigPattern), init="random", random_state=0, max_iter=30000, solver="mu")
 ones = [np.ones(WIDTH*HEIGHT)]
-temp = model.fit(ones)
+temp = model.fit_transform(fileMatrix)
 model.components_ = bigPattern
 coefficients = model.transform(fileMatrix)
 
