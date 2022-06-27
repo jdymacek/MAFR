@@ -34,7 +34,7 @@ class EigenClassifier(Classifier):
     best = ("JUNK", 9999)
     for w in self.weights:
       arr = np.array(w[1], dtype=np.float32)
-      guess = w[0]
+      guess = w[0].split("/")[0]
       error = np.linalg.norm(arr - W[0])
       if error < best[1]:
         best = (guess, error)
@@ -69,7 +69,8 @@ class EigenMajority(Classifier):
     best = ("JUNK", 9999)
     for w in self.weights:
       arr = np.array(w[1], dtype=np.float32)
-      guess = w[0]
+#guess = w[0]
+      guess = w[0].split("/")[0]
       error = np.linalg.norm(arr - W[0])
       e = (error, guess)
       errors.append(e)
