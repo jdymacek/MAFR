@@ -31,7 +31,8 @@ labels = []
 for species in tstClasses:
     speciesModel = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=30000, solver="mu")
     speciesFiles = [x[0] + "/" + y for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and os.path.basename(x[0]) == species]
-    print(speciesFiles)
+    print(species)
+    print(speciesFiles[:5])
 """
 for f in allFiles:
     labels.append(f.split("/")[-2])
