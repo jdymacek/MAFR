@@ -39,7 +39,7 @@ for species in tstClasses:
     M = np.concatenate(ml)
 
     W = speciesModel.fit_transform(M)
-    patterns += speciesModel.components_
+    patterns += [speciesModel.components_]
 
 bigPattern = np.concatenate(patterns)
 print(bigPattern.shape)
