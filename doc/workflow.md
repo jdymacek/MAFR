@@ -45,18 +45,24 @@ This document explains the process of the programs identifying and classifying p
 
 ### Now that the user has their training and testing sets, our training program will use the training set to get the best possible patterns to use for the following classifier.
 
-6. eigenTrain.py takes in the training directory with the number of patterns desired. It also takes in the number of pixels to be removed from the bottom of the image so the program will focus on where the actual signal is located. After running through the set, it will return the pattern file. This pattern file contains the number of patterns specified earlier.  
+6. eigenTrain.py takes in the training directory, -t, with the number of patterns desired, -p. It also takes in the number of pixels to be removed from the bottom of the image, -r, so the program will focus on where the actual signal is located. The center width of the signal, -w, should be stated to further focus on where the signal is located. After running through the set, it will return the pattern file. This pattern file contains the number of patterns specified earlier.  
 
-*EXAMPLE:* python3 eigenTrain.py -t trainingDirectory -p 64 -r 96
-
-
+*EXAMPLE:* python3 eigenTrain.py -t trainingDirectory -p 64 -r 96 -w 48
 
 
-### For classification, it will use the testing set and the created pattern file from training the training set. 
 
-7. eigenClassify.py takes in the testing directory and a pattern file. It utilizes a confusion matrix to examine the likelihood that the given file is a particular species. Since it keeps tracks of this for every file, it then returns the score of how many files it guessed correctly.
 
-*EXAMPLE*: python3 eigenClassify.py -p patternFile -d testingDirectory
+### We built a classification Class to organize the different classifiers we have implemented. All of the classifiers take a pattern file with its coefficients file to classfiy all of the files in the testing set.
+
+7. eigenTest.py takes in the testing directory, -d, and a pattern file, -p, with its matching .csv file of coefficients, -w created from the previous trainer. It then uses each classifier in EigenClassifier.py and returns the scores so we can compare how well each classifier did.
+
+- *EigenClassifier*: Classifies each file based on the largest coefficient and its paired species.  
+
+- *EigenMajority*: Finds the top five largest coefficients for each files and checks the species that appears the most in the top five. The species that appears at least two or more times is what that file gets classified as. 
+
+- *EigenAverage*: Looks for the top three coefficients per species for each file and takes the average. The species that has the lowest average is the species the file gets classified as. 
+
+*EXAMPLE*: python3 eigenTest.py -p patternFile.nmf -d testingDirectory -w test.csv
 
 
 
