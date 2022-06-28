@@ -47,6 +47,7 @@ classifier.updateModel(patterns, weights)
 acc = classifier.classifyAll(allFiles)
 print(f"NO MAJORITY: {acc}")
 
+
 majority = EigenMajority(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 majority.updateModel(patterns, weights)
 acc = majority.classifyAll(allFiles)
@@ -56,4 +57,4 @@ average = EigenAverage(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 average.updateModel(patterns, weights)
 acc = average.classifyAll(allFiles)
 print(f"AVERAGE: {acc}")
-
+print(average.confusion)

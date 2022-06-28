@@ -19,7 +19,7 @@ tstClasses   = next(os.walk(tstDirectory))[1]
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png")]
 
 tokens = tstDirectory.split("/")
-outPath = "/scratch/prism2022data/data/reducedNormal/testing/" + tokens[-1]
+outPath = "/scratch/prism2022data/data/reducedBlur/" + tokens[-1]
 
 blocksize=16
 for f in allFiles:
@@ -47,7 +47,7 @@ for f in allFiles:
   print(f)
   newM = MAFR.matrixToImage(m,blocksize, blocksize) 
   newM.save(outPath)  
-  outPath = "/scratch/prism2022data/data/reducedNormal/testing/" + tokens[-1]
+  outPath = "/scratch/prism2022data/data/reducedBlur/" + tokens[-1]
 quit()  
     
     

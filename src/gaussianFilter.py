@@ -4,7 +4,7 @@ from PIL import ImageFilter, Image
 import argparse
 import os
 
-OUT = "/scratch/prism2022data/data/blurredReducedNormal/training"
+OUT = "/scratch/prism2022data/data/twoBlurs/training"
 
 parser = argparse.ArgumentParser("Gaussian Filter")
 

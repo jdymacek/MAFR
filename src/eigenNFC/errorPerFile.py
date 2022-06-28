@@ -4,6 +4,7 @@ import os
 import argparse
 from sklearn import decomposition
 import numpy as np
+import math
 
 parser = argparse.ArgumentParser("Finds Error per File")
 parser.add_argument("-d", help="directory to check")
@@ -31,10 +32,21 @@ model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, 
 W = model.fit_transform(M)
 H = model.components_
 
+n = np.matmul(W,H)
+nn = M - n;
+#print(np.linalg.norm(nn, ord="fro"))
+
 ### w[i] * h => find distance between that and w[i] ###
-for i, row in enumerate(W):
-  val = np.matmul(row, H)
-  print(f"{allFiles[i]}\t{np.linalg.norm(val)}")
+total = 0
+for i, row in enumerate(nn):
+#val = np.matmul(row, H)
+#n = M[i] - val
+  a = [x**2 for x in row]
+  e = math.sqrt(sum(a))
+  print(f"{allFiles[i]},{e}")
+
+
+#print(f"TOTAL ERROR: {model.reconstruction_err_}")
 
 
 

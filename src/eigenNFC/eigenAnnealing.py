@@ -51,7 +51,7 @@ bestAccuracy = currentAccuracy
 bestPatterns = currentPatterns
 bestWeights = currentWeights
 
-temp = 20
+temp = 10
 alpha = 0.1
 finalTemp = 0.1
 
@@ -66,7 +66,7 @@ while temp > finalTemp:
   labels = []
   for f in training:
     labels.append(f.split("/")[-2])
-    arr = eigenNFC.imageToVector(f, x=(256/width)//2, y=0, width=width, height=HEIGHT)
+    arr = eigenNFC.imageToVector(f, x=(256-width)//2, y=0, width=width, height=HEIGHT)
     ml += [[arr]]
 
   M = np.concatenate(ml)
@@ -104,7 +104,7 @@ while temp > finalTemp:
 
 file = MAFR.saveMatrix(bestPatterns, PATTERNS, width, HEIGHT) 
 
-weightName = str(PATTERNS) + "+" + str(args.r) + ".csv"
+weightName = "normal-" + str(PATTERNS) + "+" + str(args.r) + ".csv"
 weights = open(weightName, "w")
 for idx, row in enumerate(bestWeights):
   rounded = [np.round(x, decimals=5) for x in row[1]]
@@ -114,3 +114,4 @@ for idx, row in enumerate(bestWeights):
 #weights.write(str(row).replace("\n", "").strip("\t") + "\n")
 
 print(file)
+print(bestAccuracy)
