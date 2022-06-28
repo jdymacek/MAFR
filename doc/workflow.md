@@ -8,7 +8,7 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 extract5.py <h5 file>`
 
-
+&nbsp;
 
 
 ### The next program will take these audio files and convert them to image files, with the audio files represented as spectrograms:
@@ -17,7 +17,7 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 wavToPng.py -d <directory of .wav files>`
 
-
+&nbsp;
 
 
 ### To make the signal stronger and the noise less prevalent, we applied multiple filtering methods.
@@ -26,12 +26,13 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 simpleFilter.py -t <directory of audio files>`
 
+&nbsp;
 
 4. gaussianFilter.py takes in a directory of images and uses gaussian blur on the images. The gaussian blur takes a blur radius, the intensity of the blur, that the user gives and applies it to each image. The blur will help spread out the signal, strengthening the presence of a signal.
 
 `python3 gaussianFilter.py -r <blur radius> -t <directory of images>`
 
-
+&nbsp;
 
 
 ### The user can create a training and testing set with the audio files. 
@@ -40,7 +41,7 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 splitSets.py <audio file directory> <species name> <custom percent>`
 
-
+&nbsp;
 
 
 ### Now that the user has their training and testing sets, our training program will use the training set to get the best possible patterns to use for the following classifier.
@@ -49,7 +50,7 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 eigenTrain.py -t <training directory> -p <number of patterns> -r <pixels to be removed from bottom> -w <center width as pixels>`
 
-
+&nbsp;
 
 
 ### We built a classification Class to organize the different classifiers we have implemented. All of the classifiers take a pattern file with its coefficients file to classfiy all of the files in the testing set.
@@ -64,6 +65,6 @@ This document explains the process of the programs identifying and classifying p
 
 `python3 eigenTest.py -p <patternFile> -d <testing directory> -w <coefficient file as a .csv>`
 
-
+&nbsp;
 
 
