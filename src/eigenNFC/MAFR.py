@@ -380,16 +380,13 @@ def getBlocksize(mat_file):
   size = f.read(2)
   return int.from_bytes(size, byteorder='little')
 
-'''
 def quickError(original, patterns, inv):
   c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
   return np.linalg.norm(original-m_hat)
-'''
 
 #def getTimeStr():
 #return datetime.now().strftime(
-
 def closestDivisor(n):
   divisors = []
   for i in range(1, n+1):
@@ -414,3 +411,4 @@ def getClasses(directory):
   classes = sorted(classes)
   print(classes)
   return classes 
+

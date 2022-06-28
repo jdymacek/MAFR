@@ -47,7 +47,8 @@ t0 = time.time()
 model = decomposition.NMF(n_components=PATTERNS, init="random", random_state=0, max_iter=30000, solver="mu")
 w = model.fit_transform(M)
 
-out = open("test.csv", "w")
+filename = f"{PATTERNS}+{WIDTH}+{HEIGHT}.csv"
+out = open(filename, "w")
 for index, row in enumerate(w):
     line = labels[index]
     for val in row:
@@ -55,9 +56,5 @@ for index, row in enumerate(w):
     out.write(line + "\n")
 
 h = model.components_
-print(f"ESTIMATED ERROR 1: {model.reconstruction_err_}")
-print(f"ITERATIONS: {model.n_iter_}")
-print(f"TIME TO FIND PATTERNS: {time.time() - t0}")
-
 MAFR.saveMatrix(h, PATTERNS, WIDTH, HEIGHT) 
 

@@ -4,7 +4,7 @@ from PIL import ImageFilter, Image
 import argparse
 import os
 
-OUT = "/scratch/prism2022data/data/blur/training/"
+OUT = "/scratch/prism2022data/data/blurredReducedNormal/training"
 
 parser = argparse.ArgumentParser("Gaussian Filter")
 
@@ -21,6 +21,6 @@ allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.e
 for f in allFiles:
 	c = f.split("/")[-2]
 	print(c)
-	img = Image.open(f)
+	img = MAFR.loadImage(f,16)
 	img2 = img.filter(ImageFilter.GaussianBlur(radius=rad))
 	img2.save(OUT + "/" + c + "/" + f.split("/")[-1])

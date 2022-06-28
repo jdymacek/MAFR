@@ -1,4 +1,4 @@
-from EigenClassifier import EigenClassifier, EigenMajority
+from EigenClassifier import EigenClassifier, EigenMajority, EigenAverage
 import eigenNFC
 import MAFR
 import csv
@@ -51,4 +51,9 @@ majority = EigenMajority(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 majority.updateModel(patterns, weights)
 acc = majority.classifyAll(allFiles)
 print(f"MAJORITY: {acc}")
-print(f"Time: {time.time() - t0}")
+
+average = EigenAverage(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
+average.updateModel(patterns, weights)
+acc = average.classifyAll(allFiles)
+print(f"AVERAGE: {acc}")
+
