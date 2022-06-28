@@ -6,7 +6,7 @@ This document explains the process of the programs identifying and classifying p
 
 1. extract5.py does this by taking in a .h5 file, extarcting the .wav files, and storing those files in a seperate directory labeled by their taxonomy code.
 
-*EXAMPLE*: python3 extract5.py BirdVox-14SD_1-4-1_original.h5
+`python3 extract5.py <h5 file>`
 
 
 
@@ -15,7 +15,7 @@ This document explains the process of the programs identifying and classifying p
 
 2. wavToPng.py takes in a directory of .wav files and returns the spectrogram of that file in the same directory. This program utilizes Sound eXchange(SoX), a sound processing program, to do this.
 
-*EXAMPLE*: python3 wavToPng.py -d wavDirectory
+`python3 wavToPng.py -d <directory of .wav files>`
 
 
 
@@ -24,12 +24,12 @@ This document explains the process of the programs identifying and classifying p
 
 3. simpleFilter.py takes in a directory of .wav files and reduces the noise on every file. After the noise reduction, the new images are stored in a new directory labeled "reducedFromBoth".
 
-*EXAMPLE*: python3 simpleFilter.py -t audioDirectory 
+`python3 simpleFilter.py -t <directory of audio files>`
 
 
 4. gaussianFilter.py takes in a directory of images and uses gaussian blur on the images. The gaussian blur takes a blur radius, the intensity of the blur, that the user gives and applies it to each image. The blur will help spread out the signal, strengthening the presence of a signal.
 
-*EXAMPLE*: python3 gaussianFilter.py -r 2 -t imageDirectory
+`python3 gaussianFilter.py -r <blur radius> -t <directory of images>`
 
 
 
@@ -38,7 +38,7 @@ This document explains the process of the programs identifying and classifying p
 
 5. splitSets.py takes in a directory of audio files and splits it based on the percentage the user provides as a float. The program will create a training and testing directory named after the species the audios belong to. This program orignally used a 60-40 split, but it can be adjusted, though the results may be more accurate if the training set has more than the testing set. 
 
-*EXAMPLE*: python3 splitSets.py audioDirectory speciesName customPercent
+`python3 splitSets.py <audio file directory> <species name> <custom percent>`
 
 
 
@@ -47,7 +47,7 @@ This document explains the process of the programs identifying and classifying p
 
 6. eigenTrain.py takes in the training directory, -t, with the number of patterns desired, -p. It also takes in the number of pixels to be removed from the bottom of the image, -r, so the program will focus on where the actual signal is located. The center width of the signal, -w, should be stated to further focus on where the signal is located. After running through the set, it will return the pattern file. This pattern file contains the number of patterns specified earlier.  
 
-*EXAMPLE:* python3 eigenTrain.py -t trainingDirectory -p 64 -r 96 -w 48
+`python3 eigenTrain.py -t <training directory> -p <number of patterns> -r <pixels to be removed from bottom> -w <center width as pixels>`
 
 
 
@@ -62,7 +62,7 @@ This document explains the process of the programs identifying and classifying p
 
 - *EigenAverage*: Looks for the top three coefficients per species for each file and takes the average. The species that has the lowest average is the species the file gets classified as. 
 
-*EXAMPLE*: python3 eigenTest.py -p patternFile.nmf -d testingDirectory -w test.csv
+`python3 eigenTest.py -p <patternFile> -d <testing directory> -w <coefficient file as a .csv>`
 
 
 
