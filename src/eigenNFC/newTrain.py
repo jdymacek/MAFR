@@ -27,6 +27,8 @@ WIDTH = int(args.w)
 
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
+#random.shuffle(allFiles)
+allFiles.sort()
 
 ml = []
 for f in allFiles:

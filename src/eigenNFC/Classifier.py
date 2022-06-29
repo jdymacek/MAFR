@@ -13,11 +13,16 @@ class Classifier:
 
   #correct label is directory
   def classifyAll(self, files):
+    files.sort()
     self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
     for f in files:
       predicted = self.classify(f)
       expected = f.split("/")[-2]
-      self.confusion[predicted][expected] += 1
+      self.confusion[expected][predicted] += 1
     self.accuracy = sum([self.confusion[k][k] for k in self.classes]) / len(files)
+    for k in self.confusion.keys():
+      total = sum(self.confusion[k].values())
+      for sp in self.classes:
+        self.confusion[k][sp] = round(self.confusion[k][sp] / total, 3)
     return self.accuracy
 
