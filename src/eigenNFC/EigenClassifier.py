@@ -114,16 +114,23 @@ class EigenAverage(Classifier):
     W = self.model.transform(M)
 
     errors = []
-    best = ("JUNK", 9999)
     for w in self.weights:
       arr = np.array(w[1], dtype=np.float32)
-      guess = w[0]
       error = np.linalg.norm(arr - W[0])
-      e = (error, guess)
-      errors.append(e)
-      if error < best[1]:
-        best = (guess, error)
+      errors.append( (error,w[0]))
 
+    labels = set([w[0] for w in self.weights])
+
+    averages = []
+    for sp in labels:
+      distances = [e[0] for e in errors if e[1] == sp]
+      distances = sorted(distances)[:3]
+      averages += [(sum(distances)/len(distances),sp)]
+
+    averages = sorted(averages)
+    return averages[0][1]
+
+"""
     AMRElist = [e for e in errors if e[1] == "AMRE"]
     BBWAlist = [e for e in errors if e[1] == "BBWA"]
     BTBWlist = [e for e in errors if e[1] == "BTBW"]
@@ -153,4 +160,4 @@ class EigenAverage(Classifier):
 
     best = (allClasses[bestInd][1], 0)
     return best[0]
-
+"""
