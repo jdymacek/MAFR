@@ -16,6 +16,7 @@ class Classifier:
     files.sort()
     self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
     for f in files:
+#print(f)
       predicted = self.classify(f)
       expected = f.split("/")[-2]
       self.confusion[expected][predicted] += 1

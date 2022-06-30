@@ -1,4 +1,4 @@
-from EigenClassifier import EigenClassifier, EigenMajority, EigenAverage
+from EigenClassifier import EigenClassifier, EigenMajority, EigenAverage, EigenVersus, EigenTrickle
 import eigenNFC
 import MAFR
 import csv
@@ -41,7 +41,6 @@ allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.e
 tstClasses = MAFR.getClasses(tstDirectory)
 patterns, labels = MAFR.loadMatrix(patternFile)
 
-t0 = time.time()
 classifier = EigenClassifier(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 classifier.updateModel(patterns, weights)
 acc = classifier.classifyAll(allFiles)
@@ -57,4 +56,18 @@ average = EigenAverage(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 average.updateModel(patterns, weights)
 acc = average.classifyAll(allFiles)
 print(f"AVERAGE: {acc}")
-print(average.confusion)
+
+"""
+trickle = EigenTrickle(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
+trickle.updateModel(patterns, weights)
+acc = trickle.classifyAll(allFiles)
+print(f"TRICKLE: {acc}")
+
+for c in tstClasses:
+  versus = EigenVersus([c,"REST"], PATTERN_NUM, WIDTH, HEIGHT)
+  versus.updateModel(patterns, weights)
+  acc = versus.classifyAll(allFiles)
+  print(f"{c}: {acc}")
+  print(versus.confusion)
+
+"""
