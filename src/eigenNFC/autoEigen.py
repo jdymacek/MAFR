@@ -25,7 +25,7 @@ csv = open("results2.csv", "w")
 csv.write("PATTERNS,REMOVED,CORRECT,PERCENT\n")
 """
 host = os.uname()[1]
-fout = open(f"{host}.txt", "w")
+fout = open(f"exploreOut/{host}.txt", "a")
 for r in REMOVE:
     for p in PATTERNS:
       for w in WIDTH:
