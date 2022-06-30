@@ -407,6 +407,5 @@ def getClasses(directory):
   classes = next(os.walk(directory))[1]
   classes = list(filter(lambda x:len(x)==4, classes))
   classes = sorted(classes)
-  print(classes)
   return classes 
 

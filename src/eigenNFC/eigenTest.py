@@ -41,6 +41,7 @@ allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.e
 tstClasses = MAFR.getClasses(tstDirectory)
 patterns, labels = MAFR.loadMatrix(patternFile)
 
+"""
 classifier = EigenClassifier(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 classifier.updateModel(patterns, weights)
 acc = classifier.classifyAll(allFiles)
@@ -51,11 +52,12 @@ majority = EigenMajority(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 majority.updateModel(patterns, weights)
 acc = majority.classifyAll(allFiles)
 print(f"MAJORITY: {acc}")
+"""
 
 average = EigenAverage(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 average.updateModel(patterns, weights)
 acc = average.classifyAll(allFiles)
-print(f"AVERAGE: {acc}")
+print(f"{PATTERN_NUM},{WIDTH},{256-HEIGHT},{round(acc, 3)}")
 
 """
 trickle = EigenTrickle(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)

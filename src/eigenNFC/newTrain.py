@@ -27,8 +27,8 @@ WIDTH = int(args.w)
 
 
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
-random.shuffle(allFiles)
-#allFiles.sort()
+#random.shuffle(allFiles)
+allFiles.sort()
 
 ml = []
 for f in allFiles:
@@ -44,7 +44,6 @@ e = M - (np.matmul(w, h))
 errors = [np.linalg.norm(row) for row in e]
 average = statistics.mean(errors)
 stdev = statistics.stdev(errors)
-print(f"AVERAGE: {average}\tSTDEV: {stdev}")
 
 oldLen = len(w)
 toKeep = [x < (average + 0.5*stdev) for x in errors]
