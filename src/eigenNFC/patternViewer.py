@@ -21,7 +21,7 @@ n = (M/maximum) * 255
 size = int(math.sqrt(len(n[0])))
 res = Image.new('L', (width, height*len(n)))
 
-for i, row in enumerate(n[:16]):
+for i, row in enumerate(n):
     tile = row.astype(np.uint8)
     img = Image.fromarray(tile.reshape(height, width), mode="L")
     res.paste(img, (0, i*height, width, (i+1)*height))
