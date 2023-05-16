@@ -19,6 +19,7 @@ class Classifier:
 #print(f)
       predicted = self.classify(f)
       expected = f.split("/")[-2]
+      print("," + expected)
       self.confusion[expected][predicted] += 1
     self.accuracy = sum([self.confusion[k][k] for k in self.classes]) / len(files)
     for k in self.confusion.keys():

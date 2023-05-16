@@ -135,6 +135,8 @@ class EigenAverage(Classifier):
       averages += [(sum(distances)/len(distances),sp)]
 
     averages = sorted(averages)
+
+    print(f"{averages[0][0]},{averages[1][0]},{averages[2][0]},{averages[0][1]}", end='')
     return averages[0][1]
 
 """
