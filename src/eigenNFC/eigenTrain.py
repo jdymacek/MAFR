@@ -37,7 +37,9 @@ allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.e
 ml = []
 labels = []
 for f in allFiles:
-    labels.append(f.split("/")[-2])
+#    labels.append(f.split("/")[-2])
+    fp = f.split("/")
+    labels.append(fp[-2] + "/" + fp[-1])
     arr = eigenNFC.imageToVector(f, x=(256-WIDTH)//2, y=0, width=WIDTH, height=HEIGHT)
     ml += [[arr]]
 
