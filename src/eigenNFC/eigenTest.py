@@ -45,9 +45,9 @@ patterns, labels = MAFR.loadMatrix(patternFile)
 classifier = EigenClassifier(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 classifier.updateModel(patterns, weights)
 acc = classifier.classifyAll(allFiles)
-print(f"NO MAJORITY: {acc}")
+"""
 
-
+"""
 majority = EigenMajority(tstClasses, PATTERN_NUM, WIDTH, HEIGHT)
 majority.updateModel(patterns, weights)
 acc = majority.classifyAll(allFiles)

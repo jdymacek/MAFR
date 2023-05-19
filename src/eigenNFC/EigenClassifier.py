@@ -36,7 +36,10 @@ class EigenClassifier(Classifier):
       arr = np.array(w[1], dtype=np.float32)
       #guess = w[0].split("/")[0]
       guess = w[0]
-      error = np.linalg.norm(arr - W[0])
+      #use normalized coefficients
+      q = W[0] / np.linalg.norm(W[0])
+
+      error = np.linalg.norm(arr - q)
       if error < best[1]:
         best = (guess, error)
 
@@ -95,7 +98,8 @@ class EigenAverage(Classifier):
     for idx, row in enumerate(self.weights):
       arr = np.array(row[1], dtype=np.float32)
       total = sum(arr)
-      self.weights[idx] = (row[0], arr/total)
+      guess = row[0].split("/")[0]
+      self.weights[idx] = (guess, arr/total, row[0])
 
     self.patterns = patterns
     self.model.components_ = patterns
@@ -125,19 +129,21 @@ class EigenAverage(Classifier):
 #arr = np.array(w[1], dtype=np.float32)
       row = W[0]/sum(W[0])
       error = np.linalg.norm(w[1] - row)
-      errors.append( (error,w[0]))
+      errors.append( (error,w[0],w[2]))
 
     labels = set([w[0] for w in self.weights])
 
     averages = []
     for sp in labels:
-      distances = [e[0] for e in errors if e[1] == sp]
+      distances = [(e[0],e[2]) for e in errors if e[1] == sp]
       distances = sorted(distances)[:self.averageWidth]
+      print(distances)
+      distances = [x[0] for x in distances]
       averages += [(sum(distances)/len(distances),sp)]
 
     averages = sorted(averages)
 
-    print(f"{averages[0][0]},{averages[1][0]},{averages[2][0]},{averages[0][1]}", end='')
+    print(f"{averages[0][0]},{averages[1][0]},{averages[2][0]},{averages[0][1]}",end="")
     return averages[0][1]
 
 """

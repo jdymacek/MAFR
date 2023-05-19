@@ -6,6 +6,7 @@ class Classifier:
     self.classes = classes
     self.acccuracy = 0.0
     self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
+    self.labelsUsed = {}
   
   def classify(self, file):
     print("ERROR: MUST BE OVERWRITTEN BY SUBCLASS")
@@ -15,12 +16,28 @@ class Classifier:
   def classifyAll(self, files):
     files.sort()
     self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
+    
+
     for f in files:
 #print(f)
-      predicted = self.classify(f)
+      result = self.classify(f)
+
+      predicted = result.split("/")[0]
+
       expected = f.split("/")[-2]
       print("," + expected)
+
       self.confusion[expected][predicted] += 1
+      if result not in self.labelsUsed:
+         self.labelsUsed[result] = (0,0)
+      if expected == predicted:
+         self.labelsUsed[result] = (self.labelsUsed[result][0] + 1,self.labelsUsed[result][1]) 
+      else:
+         self.labelsUsed[result] = (self.labelsUsed[result][0],self.labelsUsed[result][1] + 1)
+
+
+    for x,y in self.labelsUsed.items():
+      print(f"{x}\t{y[0]}\t{y[1]}")
     self.accuracy = sum([self.confusion[k][k] for k in self.classes]) / len(files)
     for k in self.confusion.keys():
       total = sum(self.confusion[k].values())
