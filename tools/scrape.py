@@ -4,7 +4,11 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-url = 'https://zenodo.org/record/3667094#.YmgtEtrMK3A/'
+#BirdVox-14SD
+#url = 'https://zenodo.org/record/3667094#.YmgtEtrMK3A/'
+
+#BirdVox-ANAFCC
+url = "https://zenodo.org/record/3666782#.ZGt8qS-B3gs"
 r = requests.get(url)
 
 #print(r.content[:100])
@@ -16,8 +20,8 @@ links = soup.find_all('a')
 i = 0
 
 
-os.system("mkdir prism2022data")
-os.system("cd prism2022data")
+os.system("mkdir BirdVox-ANAFCC")
+os.system("cd BirdVox-ANAFCC")
 
 for link in links:
   if('.h5' in link.get('href', [])):

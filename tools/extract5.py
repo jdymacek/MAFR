@@ -10,8 +10,8 @@ from scipy.io.wavfile import write
 
 SAMPLERATE = 22050
 
-filename = sys.argv[1]
-tax_code = filename[13:18]
+tax_code = sys.argv[1]
+filename = sys.argv[2]
 print(tax_code)
 
 try:
@@ -25,7 +25,8 @@ with h5py.File(filename, 'r') as f:
   for k in keys:
     dataset = f['waveforms'][k]
     data = dataset[:]
-    counter += 1
-    wav_name = tax_code + '/' + 'clip' + str(counter) + '.wav'
+#    counter += 1
+#    wav_name = tax_code + '/' + 'clip' + str(counter) + '.wav'
+    wav_name = tax_code + '/' + k + '.wav' 
     write(wav_name, SAMPLERATE, data)
   f.close()

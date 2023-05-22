@@ -137,7 +137,7 @@ class EigenAverage(Classifier):
     for sp in labels:
       distances = [(e[0],e[2]) for e in errors if e[1] == sp]
       distances = sorted(distances)[:self.averageWidth]
-      print(distances)
+      #print(distances)
       distances = [x[0] for x in distances]
       averages += [(sum(distances)/len(distances),sp)]
 
