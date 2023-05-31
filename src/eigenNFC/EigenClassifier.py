@@ -1,5 +1,7 @@
 from Classifier import Classifier
 import MAFR
+from sklearn import linear_model
+from sklearn import preprocessing
 from sklearn import decomposition
 import numpy as np
 import csv
@@ -45,6 +47,53 @@ class EigenClassifier(Classifier):
 
     return best[0]
 
+
+
+class EigenRegression(Classifier):
+  def updateModel(self, patterns, weights):
+    self.weights = weights
+    self.patterns = patterns
+    self.model.components_ = patterns
+    y = [w[0].split("/")[0] for w in self.weights]
+    X = np.concatenate([[np.array(w[1], dtype=np.float64) for w in self.weights]])
+    self.scaler = preprocessing.StandardScaler().fit(X)
+    X_train = self.scaler.transform(X)
+    self.reg = linear_model.LogisticRegression(random_state=0).fit(X_train, y)
+
+
+
+  def __init__(self, classes, numPatterns, width, height):
+    super(EigenRegression, self).__init__(classes)
+
+    self.patterns = None
+    self.weights = None
+    self.reg = None
+    self.width = width
+    self.height = height
+
+    self.threshold = 0.3
+
+    self.model = decomposition.NMF(n_components=numPatterns, init="random", random_state=0, solver="mu", max_iter=10000)
+
+    M = [np.ones(self.width*self.height)]
+    self.model.fit(M)
+
+
+  def classify(self, file):
+    M1 = [[eigenNFC.imageToVector(file, x=(256-self.width)//2, y=0, width=self.width, height=self.height)]]
+    M = np.concatenate(M1)
+    raw = self.model.transform(M)
+    raw[0] = raw[0]/sum(raw[0])
+    #print(raw)
+    #W = raw
+    W = self.scaler.transform(raw)
+    ps = zip(self.reg.predict_proba(W)[0],self.reg.classes_)
+    sortedP = sorted(ps,reverse=True)
+    #print(sortedP)
+    if sortedP[0][0] >= self.threshold:
+       return sortedP[0][1]
+    return "JUNK"
+
 class EigenMajority(Classifier):
   def updateModel(self, patterns, weights):
     self.weights = weights
@@ -89,6 +138,12 @@ class EigenMajority(Classifier):
 
     if commonCount >= 2:
       best = (mostCommon, 0)
+
+    return best[0]
+
+class EigenAverage(Classifier):
+  def updateModel(self, patterns, weights):
+    self.weights = weights
 
     return best[0]
 
@@ -143,7 +198,7 @@ class EigenAverage(Classifier):
 
     averages = sorted(averages)
 
-    print(f"{averages[0][0]},{averages[1][0]},{averages[2][0]},{averages[0][1]}",end="")
+   # print(f"{averages[0][0]},{averages[1][0]},{averages[2][0]},{averages[0][1]}",end="")
     return averages[0][1]
 
 """
@@ -268,9 +323,3 @@ class EigenTrickle(Classifier):
     for c in self.classes:
       versus = EigenVersus([c,"REST"], len(self.patterns), self.width, self.height)
       versus.updateModel(self.patterns, self.weights)
-      if versus.classify(file) != "REST":
-        return c
-    average = EigenAverage(self.classes, len(self.patterns), self.width, self.height)
-    average.updateModel(self.patterns, self.weights)
-    return average.classify(file)
-
