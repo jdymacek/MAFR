@@ -43,7 +43,7 @@ tstClasses += ["JUNK"]
 patterns, labels = MAFR.loadMatrix(patternFile)
 
 for x in tstClasses:
-   print(f"{x}\t",end="\t")
+   print(f"{x}\t\t",end="\t")
 print("")
 
 for t in [x/100.0 for x in range(10,100,5)]:
@@ -51,6 +51,7 @@ for t in [x/100.0 for x in range(10,100,5)]:
    regression.threshold = t
    regression.updateModel(patterns, weights)
    acc = regression.classifyAll(allFiles)
+   print(f"{round(acc,5)}")
  #  print(f"{PATTERN_NUM},{WIDTH},{256-HEIGHT},{round(acc, 3)}")
    
 

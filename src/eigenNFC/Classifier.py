@@ -1,4 +1,5 @@
 import sys
+import math
 
 #base class for classifiers, will be overwritten by subclasses
 class Classifier:
@@ -50,14 +51,24 @@ class Classifier:
 
     for k in self.classes:
       p = 0
-      t = sum([self.confusion[x][k] for x in self.classes ])
-      if t > 0:
-        p = self.confusion[k][k]/t
       r = 0
-      t = sum([self.confusion[k][x] for x in self.classes ])
-      if t > 0:
-        r = self.confusion[k][k]/t
-      print("{:5.4f}\t{:5.4f}".format(r,p),end="\t")
+      mcc = 0
+      tp = self.confusion[k][k]
+      fp = sum([self.confusion[x][k] for x in self.classes ]) - tp
+      fn = sum([self.confusion[k][x] for x in self.classes ]) - tp
+      tn = len(files) - (tp+fp+fn)
+
+      a = max(tp+fp,1)
+      b = max(tp+fn,1)
+      c = max((math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))),1)
+
+      p = tp/a
+      r = tp/b
+      mcc = ((tp*tn)-(fp*fn))/c
+
+      acc = (tp+tn)/(tp+tn+fp+fn)
+
+      print("{:5.4f}\t{:5.4f}\t{:5.4f}".format(r,p,acc),end="\t")
 
     print("")
 
