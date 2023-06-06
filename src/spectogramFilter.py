@@ -70,12 +70,20 @@ def weightedAverage(pics):
 #	average = average.astype(numpy.uint8)
 #	return Image.fromarray(average,mode=pics[0].mode)
 
-
-
-
-
-
-
+def spectralGating(img):
+    ma = numpy.asmatrix(img)
+    print(ma)
+#def spectralGateing(img):
+    
+'''
+    for row in img:
+        #get avg
+        #get stdev
+        thresh = avg + stdev * 
+        for col in row:
+            if row/col < thresh:
+                 row/cow =  -(1-prop_decrease)
+'''
 
 
 for filename in allFiles:
@@ -110,8 +118,9 @@ for filename in allFiles:
 		img = big
 
 #CLEAN the image
-#	img = noiseReductionWeighted(img)
-	img = noiseReductionAverage(img)
+	#img = noiseReductionWeighted(img)
+	#img = noiseReductionAverage(img)
+    
 
 #BLUR the image
 #	img = img.filter(ImageFilter.GaussianBlur(radius=rad))
