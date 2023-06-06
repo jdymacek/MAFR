@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser("Filter")
 parser.add_argument("-r", help="Blur radius", default="0.75")
 parser.add_argument("-d", help="Source directory")
 parser.add_argument("-o", help="Target directory")
+parser.add_argument("-b", help="Blank", default=False, const=True, action='store_const')
 
 args = parser.parse_args()
 
@@ -111,6 +112,9 @@ for filename in allFiles:
 #GRAY the image
 	img = ImageOps.grayscale(img)
 
+#Spectral Gating
+	img = spectralGating(img)
+
 #CROP the image
 
 	if img.width > howWide:
@@ -123,21 +127,20 @@ for filename in allFiles:
 	#TINY sample is smaller than we want
 	if img.height < howTall or img.width < howWide:
 		big = Image.new(img.mode,(howWide,howTall))
-		
-		#FILL small image with noise	
-		noise = img.crop((0,0,img.width//4,img.height))
-		for x in range(0,howWide//2,noise.width):
-			big.paste(noise,(x,0))
-		noise = img.crop((img.width-img.width//4,0,img.width,img.height))
-		for x in range(howWide//2,howWide,noise.width):
-			big.paste(noise,(x,0))
+		if not args.b:
+			#FILL small image with noise	
+			noise = img.crop((0,0,img.width//4,img.height))
+			for x in range(0,howWide//2,noise.width):
+				big.paste(noise,(x,0))
+			noise = img.crop((img.width-img.width//4,0,img.width,img.height))
+			for x in range(howWide//2,howWide,noise.width):
+				big.paste(noise,(x,0))
 		big.paste(img,((howWide-img.width)//2,0))
 		img = big
 
 #CLEAN the image
 	#img = noiseReductionWeighted(img)
 	#img = noiseReductionAverage(img)
-	img = spectralGating(img)
 
 
 #BLUR the image
