@@ -71,10 +71,26 @@ def weightedAverage(pics):
 #	return Image.fromarray(average,mode=pics[0].mode)
 
 def spectralGating(img):
-    ma = numpy.asmatrix(img)
+    ma = numpy.asarray(img)
     print(ma)
-    return img
-#def spectralGateing(img):
+    freq_mean = numpy.mean(ma, axis = 1)
+    freq_std = numpy.std(ma, axis =1)
+
+   # #print(freq_std)
+    threshhold = freq_mean + freq_std * 1.5
+
+   # print(threshhold)
+    for y in range(len(threshhold)):
+        for x in range(len(ma[y])):
+            #print(ma[y])
+            if ma[y][x] < threshhold[y]:
+                ma[y][x] = ma[y][x] * (1-1)
+
+    
+    #print(freq_mean)
+   # print(ma)
+    
+    return Image.fromarray(ma)
     
 '''
     for row in img:
