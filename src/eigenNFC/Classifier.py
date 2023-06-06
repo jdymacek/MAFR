@@ -43,11 +43,11 @@ class Classifier:
 #       print("\t"+sp,end="\t")
 #    print("")
 #
-#    for k in self.confusion.keys():
-#       print(f"{k}",end="\t")
-#       for sp in self.classes:
-#          print(f"{self.confusion[k][sp]}",end='\t')
-#       print("")
+    for k in self.confusion.keys():
+       print(f"{k}",end="\t")
+       for sp in self.classes:
+          print(f"{self.confusion[k][sp]}",end='\t')
+       print("")
 
     for k in self.classes:
       p = 0
@@ -65,8 +65,10 @@ class Classifier:
       p = tp/a
       r = tp/b
       mcc = ((tp*tn)-(fp*fn))/c
-
-      acc = (tp+tn)/(tp+tn+fp+fn)
+		
+      acc = 0
+      if tp+tn+fp+fn != 0:
+         acc = (tp+tn)/(tp+tn+fp+fn)
 
       print("{:5.4f}\t{:5.4f}\t{:5.4f}".format(r,p,acc),end="\t")
 
