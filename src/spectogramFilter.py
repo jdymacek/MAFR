@@ -73,6 +73,7 @@ def weightedAverage(pics):
 def spectralGating(img):
     ma = numpy.asmatrix(img)
     print(ma)
+    return img
 #def spectralGateing(img):
     
 '''
@@ -120,7 +121,8 @@ for filename in allFiles:
 #CLEAN the image
 	#img = noiseReductionWeighted(img)
 	#img = noiseReductionAverage(img)
-    
+	img = spectralGating(img)
+
 
 #BLUR the image
 #	img = img.filter(ImageFilter.GaussianBlur(radius=rad))
