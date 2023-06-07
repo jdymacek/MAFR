@@ -1,6 +1,7 @@
 import PIL
+import math
 import numpy
-from PIL import ImageFilter, Image, ImageOps,ImageChops,ImageMath
+from PIL import ImageFilter, Image, ImageOps,ImageChops,ImageMath,ImageDraw
 import argparse
 import os
 
@@ -54,7 +55,7 @@ def noiseReductionAverage(img, weights=None):
 
 	noise = averageImages(list(reversed(stripes[-blocks:])),weights)
 	for i in range(len(stripes)):
-		stripes[i] = ImageChops.subtract(stripes[i],noise)
+		stripes[i] = ImageChops.subtract(stripes[i],noise,scale=0.75)
 		rv.paste(stripes[i],(i*16,0))
 
 	return rv
@@ -112,6 +113,25 @@ def spectralGating(img):
                  row/cow =  -(1-prop_decrease)
 '''
 
+def alternatingImage(img):
+	if img.width >= howWide:
+		return img
+
+	bigSize = math.ceil((howWide-img.width)/(img.width*2))
+
+
+	bigImg = Image.new(img.mode,(bigSize*img.width*2+img.width,img.height))
+	fli = ImageOps.mirror(img.copy())
+	dbl = Image.new(img.mode,(img.width*2,img.height))
+	dbl.paste(fli,(0,0,img.width,img.height))
+	dbl.paste(img,(img.width,0,img.width*2,img.height))
+	bigImg.paste(img,(0,0,img.width,img.height))
+
+	for x in range(img.width,(bigSize+1)*img.width,img.width*2):
+		bigImg.paste(dbl,(x,0,x+img.width*2,img.height))
+	x = (bigImg.width//2)-(howWide//2)
+	return bigImg.crop((x,0,x+howWide,img.height))
+
 
 for filename in allFiles:
 	print(filename)
@@ -121,9 +141,11 @@ for filename in allFiles:
 #GRAY the image
 	img = ImageOps.grayscale(img)
 	org = img.copy()
+
+	img = alternatingImage(img)
     
 #Spectral Gating
-	img = spectralGating(img)
+#	img = spectralGating(img)
 
 #CROP the image
 
@@ -150,17 +172,20 @@ for filename in allFiles:
 
 #CLEAN the image
 	#img = noiseReductionWeighted(img)
-	#img = noiseReductionAverage(img)
+	img = noiseReductionAverage(img)
 
 
 #BLUR the image
 #	img = img.filter(ImageFilter.GaussianBlur(radius=rad))
     
 
+
 #SAVE the image
-	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height))
+	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height)))
 	cmp.paste(img,(0,0,img.width,img.height))
 	cmp.paste(org,(img.width,0,img.width+org.width,org.height))
+	draw = ImageDraw.Draw(cmp)
+	draw.text((10,10),filename.split("/")[-1],fill=255)
 	cmp.save(outDirectory + filename.split("/")[-1])
     
 
