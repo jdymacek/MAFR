@@ -73,25 +73,34 @@ def weightedAverage(pics):
 
 def spectralGating(img):
     ma = numpy.asarray(img)
-    print(ma)
     freq_mean = numpy.mean(ma, axis = 1)
     freq_std = numpy.std(ma, axis =1)
 
-   # #print(freq_std)
     threshhold = freq_mean + freq_std * 1.5
+    mask = ma.copy()
 
-   # print(threshhold)
     for y in range(len(threshhold)):
-        for x in range(len(ma[y])):
+        for x in range(len(mask[y])):
             #print(ma[y])
-            if ma[y][x] < threshhold[y]:
-                ma[y][x] = ma[y][x] * (1-1)
+            if mask[y][x] < threshhold[y]:
+                mask[y][x] = mask[y][x] * (1-1)
+            else:
+                mask[y][x] = 255
 
+    kernal = Image.fromarray(mask)
+    kernal = kernal.filter(ImageFilter.SMOOTH_MORE)
+    mask = numpy.asarray(kernal,dtype=numpy.float32) / 255
+
+
+    ma = ma * mask
     
+
+
+
     #print(freq_mean)
    # print(ma)
     
-    return Image.fromarray(ma)
+    return Image.fromarray(ma.astype(numpy.uint8))
     
 '''
     for row in img:
@@ -111,7 +120,8 @@ for filename in allFiles:
 
 #GRAY the image
 	img = ImageOps.grayscale(img)
-
+	org = img.copy()
+    
 #Spectral Gating
 	img = spectralGating(img)
 
@@ -145,8 +155,9 @@ for filename in allFiles:
 
 #BLUR the image
 #	img = img.filter(ImageFilter.GaussianBlur(radius=rad))
+    
 
 #SAVE the image
 	img.save(outDirectory + filename.split("/")[-1])
-
+    
 
