@@ -121,14 +121,28 @@ def alternatingImage(img):
 
 
 	bigImg = Image.new(img.mode,(bigSize*img.width*2+img.width,img.height))
+
 	fli = ImageOps.mirror(img.copy())
 	dbl = Image.new(img.mode,(img.width*2,img.height))
-	dbl.paste(fli,(0,0,img.width,img.height))
-	dbl.paste(img,(img.width,0,img.width*2,img.height))
-	bigImg.paste(img,(0,0,img.width,img.height))
+    
 
-	for x in range(img.width,(bigSize+1)*img.width,img.width*2):
-		bigImg.paste(dbl,(x,0,x+img.width*2,img.height))
+
+	if bigSize % 2 ==1:        
+
+	
+		dbl.paste(fli,(0,0,img.width,img.height))
+		dbl.paste(img,(img.width,0,img.width*2,img.height))
+		bigImg.paste(img,(0,0,img.width,img.height))
+
+    
+    else:        
+
+        dbl.paste(img,(0,0,img.width,img.height))
+    	dbl.paste(fli,(img.width,0,img.width*2,img.height))
+    	bigImg.paste(fli,(0,0,img.width,img.height))
+        
+	for x in range(img.width,bigImg.width+img.width,dbl.width):
+		bigImg.paste(dbl,(x,0,x+dbl.width,img.height))
 	x = (bigImg.width//2)-(howWide//2)
 	return bigImg.crop((x,0,x+howWide,img.height))
 
