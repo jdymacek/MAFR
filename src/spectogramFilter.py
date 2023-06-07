@@ -158,6 +158,9 @@ for filename in allFiles:
     
 
 #SAVE the image
-	img.save(outDirectory + filename.split("/")[-1])
+	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height))
+	cmp.paste(img,(0,0,img.width,img.height))
+	cmp.paste(org,(img.width,0,img.width+org.width,org.height))
+	cmp.save(outDirectory + filename.split("/")[-1])
     
 
