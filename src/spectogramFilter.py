@@ -128,18 +128,13 @@ def alternatingImage(img):
 
 
 	if bigSize % 2 ==1:        
-
-	
 		dbl.paste(fli,(0,0,img.width,img.height))
 		dbl.paste(img,(img.width,0,img.width*2,img.height))
-		bigImg.paste(img,(0,0,img.width,img.height))
-
-    
-    else:        
-
-        dbl.paste(img,(0,0,img.width,img.height))
-    	dbl.paste(fli,(img.width,0,img.width*2,img.height))
-    	bigImg.paste(fli,(0,0,img.width,img.height))
+		bigImg.paste(img,(0,0,img.width,img.height))    
+	else:        
+		dbl.paste(img,(0,0,img.width,img.height))
+		dbl.paste(fli,(img.width,0,img.width*2,img.height))
+		bigImg.paste(fli,(0,0,img.width,img.height))
         
 	for x in range(img.width,bigImg.width+img.width,dbl.width):
 		bigImg.paste(dbl,(x,0,x+dbl.width,img.height))
