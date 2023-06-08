@@ -1,8 +1,15 @@
 import os
 
+
+
+
 parser = argparse.ArgumentParser("Toolchain for NFC Identification and Classification")
 parser.add_argument("-h", help="h5 file directory", required=True)
 args = parser.parse_args()
+
+
+
+
 
 #first call h5 extract
 hFiles = os.listdir(args.h)
