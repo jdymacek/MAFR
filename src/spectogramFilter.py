@@ -19,6 +19,11 @@ outDirectory = args.o
 if outDirectory[-1] != "/":
 	outDirectory += "/"
 
+try:
+    os.makedirs(outdirectory)
+except FileExistsError:
+    pass 
+
 allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
 
 howWide = 256
