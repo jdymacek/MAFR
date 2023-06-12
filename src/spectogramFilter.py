@@ -118,7 +118,7 @@ def spectralGating(img):
 '''
 
 
-def cleanToOrg(img,org):
+def cleanSides(img,org):
 	if org.width >= howWide:
 		return img
 	fin = Image.new(img.mode,(howWide,howTall))
