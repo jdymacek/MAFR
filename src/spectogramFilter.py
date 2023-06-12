@@ -117,6 +117,15 @@ def spectralGating(img):
                  row/cow =  -(1-prop_decrease)
 '''
 
+
+def cleanToOrg(img,org):
+	if org.width >= howWide:
+		return img
+	fin = Image.new(img.mode,(howWide,howTall))
+	x = (howWide- org.width)//2
+	fin.paste(img.crop(x,0,x+org.width,img.height),(x,0,x+org.width,img.height))
+	return fin
+
 def alternatingImage(img):
 	if img.width >= howWide:
 		return img
@@ -196,8 +205,9 @@ for filename in allFiles:
 
 #SAVE the image
 
-	print("saving image")
+	
 
+	img = cleanSides(img,org)
 	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height)))
 
 	cmp.paste(img,(0,0,img.width,img.height))
@@ -206,6 +216,5 @@ for filename in allFiles:
 	draw.text((10,10),filename.split("/")[-1],fill=255)
 	cmp.save(outDirectory + filename.split("/")[-1])
     
-	print(outDirectory)
     
 
