@@ -20,7 +20,7 @@ if outDirectory[-1] != "/":
 	outDirectory += "/"
 
 try:
-    os.makedirs(outdirectory)
+    os.makedirs(outDirectory)
 except FileExistsError:
     pass 
 
@@ -28,7 +28,6 @@ allFiles = [x[0] + "/" +  y  for x in os.walk(tstDirectory) for y in x[2] if y.e
 
 howWide = 256
 howTall = 256
-
 
 def stripeImage(img,stride):
 	stripes = []
@@ -151,6 +150,7 @@ for filename in allFiles:
 	print(filename)
 #LOAD the image
 	img = Image.open(filename)
+    
 
 #GRAY the image
 	img = ImageOps.grayscale(img)
@@ -184,7 +184,7 @@ for filename in allFiles:
 		big.paste(img,((howWide-img.width)//2,0))
 		img = big
 
-#CLEAN the image
+#CLEAN the image    
 	#img = noiseReductionWeighted(img)
 	img = noiseReductionAverage(img)
 
@@ -195,11 +195,17 @@ for filename in allFiles:
 
 
 #SAVE the image
+
+	print("saving image")
+
 	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height)))
+
 	cmp.paste(img,(0,0,img.width,img.height))
 	cmp.paste(org,(img.width,0,img.width+org.width,org.height))
 	draw = ImageDraw.Draw(cmp)
 	draw.text((10,10),filename.split("/")[-1],fill=255)
 	cmp.save(outDirectory + filename.split("/")[-1])
+    
+	print(outDirectory)
     
 
