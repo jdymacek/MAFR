@@ -123,7 +123,7 @@ def cleanSides(img,org):
 		return img
 	fin = Image.new(img.mode,(howWide,howTall))
 	x = (howWide- org.width)//2
-	fin.paste(img.crop(x,0,x+org.width,img.height),(x,0,x+org.width,img.height))
+	fin.paste(img.crop((x,0,x+org.width,img.height)),(x,0,x+org.width,img.height))
 	return fin
 
 def alternatingImage(img):
