@@ -209,14 +209,17 @@ for filename in allFiles:
 	
 
 	img = cleanSides(img,org)
-	cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height)))
+	
+	if args.g:
+		cmp = Image.new(img.mode,(img.width+org.width,max(img.height,org.height)))
 
-	cmp.paste(img,(0,0,img.width,img.height))
-	cmp.paste(org,(img.width,0,img.width+org.width,org.height))
-	draw = ImageDraw.Draw(cmp)
-	draw.text((10,10),filename.split("/")[-1],fill=255)
+		cmp.paste(img,(0,0,img.width,img.height))
+		cmp.paste(org,(img.width,0,img.width+org.width,org.height))
+		draw = ImageDraw.Draw(cmp)
+		draw.text((10,10),filename.split("/")[-1],fill=255)
+		img = cmp
 
-	cmp.save(outDirectory + filename.split("/")[-1])
+	img.save(outDirectory + filename.split("/")[-1])
     
     
 
