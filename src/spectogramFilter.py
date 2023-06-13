@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser("Filter")
 parser.add_argument("-r", help="Blur radius", default="0.75")
 parser.add_argument("-d", help="Source directory")
 parser.add_argument("-o", help="Target directory")
+parser.add_argument("-g", help="Annotated images", default=False, const=True, action='store_const')
 parser.add_argument("-b", help="Blank", default=False, const=True, action='store_const')
 
 args = parser.parse_args()
@@ -214,6 +215,7 @@ for filename in allFiles:
 	cmp.paste(org,(img.width,0,img.width+org.width,org.height))
 	draw = ImageDraw.Draw(cmp)
 	draw.text((10,10),filename.split("/")[-1],fill=255)
+
 	cmp.save(outDirectory + filename.split("/")[-1])
     
     
