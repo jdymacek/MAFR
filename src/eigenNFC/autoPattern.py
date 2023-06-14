@@ -1,5 +1,5 @@
 from EigenTrainer import SimpleTrainer
-from EigenClassifier import EigenAverage
+from EigenClassifier import EigenRegression
 import os
 import subprocess
 import argparse
@@ -22,16 +22,18 @@ r = 116
 allFiles, classes = MAFR.listAllFiles(args.d)
 allTraining, allTesting = MAFR.splitSamples(allFiles, classes, float(args.t))
 
+print(f'{len(allTraining)}\t{len(allTesting)}')
+
 stopwatch = Timer()
 for p in PATTERNS:
     stopwatch.start()
     trainer = SimpleTrainer(allTraining, p) 
     trainer.updateSize((256-r), w)
+    weights, patterns = trainer.train()
     stopwatch.stop()
     stopwatch.print()
     stopwatch.start()
-    classifier = EigenAverage(classes, p, w, (256 - r))
-    weights, patterns = trainer.train()
+    classifier = EigenRegression(classes, p, w, (256 - r))
 
     classifier.updateModel(patterns, weights)
     acc = classifier.classifyAll(allTesting)

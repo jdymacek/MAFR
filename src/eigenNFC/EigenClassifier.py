@@ -33,7 +33,7 @@ class EigenClassifier(Classifier):
     M = np.concatenate(M1)
     W = self.model.transform(M)
 
-    best = ("JUNK", 9999)
+    best = ("UNKN", 9999)
     for w in self.weights:
       arr = np.array(w[1], dtype=np.float32)
       #guess = w[0].split("/")[0]
@@ -92,7 +92,7 @@ class EigenRegression(Classifier):
     #print(sortedP)
     if sortedP[0][0] >= self.threshold:
        return sortedP[0][1]
-    return "JUNK"
+    return "UNKN"
 
 class EigenMajority(Classifier):
   def updateModel(self, patterns, weights):
@@ -119,7 +119,7 @@ class EigenMajority(Classifier):
     W = self.model.transform(M)
 
     errors = []
-    best = ("JUNK", 9999)
+    best = ("UNKN", 9999)
     for w in self.weights:
       arr = np.array(w[1], dtype=np.float32)
 #guess = w[0]

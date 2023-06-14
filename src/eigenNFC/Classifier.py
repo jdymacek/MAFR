@@ -28,6 +28,9 @@ class Classifier:
       expected = f.split("/")[-2]
 #      print("," + expected)
 
+      if predicted not in self.confusion:
+          for k in self.confusion:
+              self.confusion[k][predicted] = 0
       self.confusion[expected][predicted] += 1
       if result not in self.labelsUsed:
          self.labelsUsed[result] = (0,0)
