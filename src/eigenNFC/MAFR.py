@@ -6,8 +6,10 @@ from PIL import Image
 from PIL import ImageOps
 import os
 import math
+import sys
 from datetime import datetime
 from sklearn import decomposition
+from random import shuffle
 
 def loadImage(filename, size):
   img = Image.open(filename)
@@ -69,19 +71,21 @@ def merge_chars(a,b):
   return c
 
 ###
-def saveMatrix(matrix, patterns, width, height, out=os.getcwd()):
+def saveMatrix(matrix, patterns, block_size, species_code, out=os.getcwd()):
 
 
+  species_first = merge_chars(species_code[1], species_code[0])
+  species_last = merge_chars(species_code[3], species_code[2])
 
   header = np.ndarray(8, dtype=np.uint16)
   header[0] = 19790
   header[1] = 20550
   header[2] = 2049
   header[3] = patterns
-  header[4] = width
-  header[5] = height
-  header[6] = 0
-  header[7] = 0
+  header[4] = block_size
+  header[5] = block_size
+  header[6] = species_first
+  header[7] = species_last
 
 #file_bytes = []
 #for row in matrix:
@@ -95,12 +99,12 @@ def saveMatrix(matrix, patterns, width, height, out=os.getcwd()):
   dir_list = os.listdir(out)
 
   new_file = ''
-  filename = out + '/' + "please" + '-' + str(00).zfill(2) + '+' + str(width) + '+' + str(height) + '+' + str(patterns) + '.nmf'
+  filename = out + '/' + species_code + '-' + str(00).zfill(2) + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
   counter = 0
   while(1):
     if os.path.exists(filename):
       counter += 1
-      filename = out + '/' + "please" + '-' + str(counter).zfill(2) + '+' + str(width) + '+' + str(height) + '+' + str(patterns) + '.nmf'
+      filename = out + '/' + species_code + '-' + str(counter).zfill(2) + '+' + str(block_size) + '+' + str(block_size) + '+' + str(patterns) + '.nmf'
     else:
       break
 
@@ -108,7 +112,6 @@ def saveMatrix(matrix, patterns, width, height, out=os.getcwd()):
   f.write(header)
   f.write(byte_array)
   f.close()
-  return filename
 
 ### matrixList = list of original .nmf pattern files 
 '''
@@ -309,6 +312,8 @@ def loadMatrix(mat_file):
 def computeError(original, patterns):
 #inv = np.linalg.pinv(patterns)
   
+  print(original.shape)
+  print(patterns.shape)
   custom = decomposition.NMF(n_components=len(patterns), init="random", random_state=0, max_iter=10000, solver="mu")
   custom = custom.fit(original)
   custom.components_ = patterns
@@ -378,13 +383,16 @@ def getBlocksize(mat_file):
   size = f.read(2)
   return int.from_bytes(size, byteorder='little')
 
+'''
 def quickError(original, patterns, inv):
   c = np.matmul(original, inv)
   m_hat = np.matmul(c, patterns)
   return np.linalg.norm(original-m_hat)
+'''
 
 #def getTimeStr():
 #return datetime.now().strftime(
+
 def closestDivisor(n):
   divisors = []
   for i in range(1, n+1):
@@ -408,4 +416,35 @@ def getClasses(directory):
   classes = list(filter(lambda x:len(x)==4, classes))
   classes = sorted(classes)
   return classes 
+
+
+def listAllFiles(directory):
+    
+    allFiles = [x[0] + "/" + y for x in os.walk(directory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
+    
+    classes = sorted(list(set([y for y in [x.split("/")[-2] for x in allFiles] if len(y) ==4])))
+    
+    return allFiles, classes
+
+
+def splitSamples(files, trainingClasses, trainPercent, seed=None):
+    
+    trainingSamples = []
+    testingSamples = []
+    #testingSamples = [x for x in files if x.split("/")[-2] not in trainingClasses]
+    for c in trainingClasses:
+        classSamples = [x for x in files if x.split("/")[-2] == c]
+       
+        shuffle(classSamples)
+        
+        s = math.ceil(len(classSamples)*trainPercent)
+        trainingSamples += classSamples[0:s]
+        testingSamples += classSamples[s:]
+    
+    return trainingSamples, testingSamples
+
+
+
+
+
 
