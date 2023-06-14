@@ -6,8 +6,10 @@ from PIL import Image
 from PIL import ImageOps
 import os
 import math
+import sys
 from datetime import datetime
 from sklearn import decomposition
+from random import shuffle
 
 def loadImage(filename, size):
   img = Image.open(filename)
@@ -414,3 +416,35 @@ def getClasses(directory):
   classes = list(filter(lambda x:len(x)==4, classes))
   classes = sorted(classes)
   return classes 
+
+
+def listAllFiles(directory):
+    
+    allFiles = [x[0] + "/" + y for x in os.walk(directory) for y in x[2] if y.endswith(".png") and len(os.path.basename(x[0])) == 4]
+    
+    classes = sorted(list(set([y for y in [x.split("/")[-2] for x in allFiles] if len(y) ==4])))
+    
+    return allFiles, classes
+
+
+def splitSamples(files, trainingClasses, trainPercent, seed=None):
+    
+    trainingSamples = []
+    testingSamples = []
+    #testingSamples = [x for x in files if x.split("/")[-2] not in trainingClasses]
+    for c in trainingClasses:
+        classSamples = [x for x in files if x.split("/")[-2] == c]
+       
+        shuffle(classSamples)
+        
+        s = math.ceil(len(classSamples)*trainPercent)
+        trainingSamples += classSamples[0:s]
+        testingSamples += classSamples[s:]
+    
+    return trainingSamples, testingSamples
+
+
+
+
+
+
