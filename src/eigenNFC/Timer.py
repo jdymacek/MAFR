@@ -18,6 +18,6 @@ class Timer:
 		return self._elapsed
 
 	def print(self):
-		if self._elapsed == None
-			return f"Total Elapsed Time: None"
-		return f"Total Elapsed Time: {self._elapsed:0.4f}s"
+        if self._elapsed == None:
+			print(f"Total Elapsed Time: None")
+		print( f"Total Elapsed Time: {self._elapsed:0.4f}s")
