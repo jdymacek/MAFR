@@ -32,11 +32,14 @@ for p in PATTERNS:
     weights, patterns = trainer.train()
     stopwatch.stop()
     stopwatch.print()
+
+
     stopwatch.start()
-    classifier = EigenRegression(classes, p, w, (256 - r))
+    classifier = EigenRegression(classes+["UNKN"], p, w, (256 - r))
 
     classifier.updateModel(patterns, weights)
     acc = classifier.classifyAll(allTesting)
+    classifier.printConfusion()
     stopwatch.stop()
     stopwatch.print()
     fout = open(f"{host}.txt", "a")

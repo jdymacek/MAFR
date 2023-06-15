@@ -28,6 +28,7 @@ class SimpleTrainer(Trainer):
     lines = []
     for index, row in enumerate(w):
       line = labels[index]
+      row = row/sum(row)
       for val in row:
         line += "," + str(np.round(val, decimals=7))
       line += "\n"

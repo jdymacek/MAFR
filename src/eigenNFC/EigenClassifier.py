@@ -58,7 +58,7 @@ class EigenRegression(Classifier):
     X = np.concatenate([[np.array(w[1], dtype=np.float64) for w in self.weights]])
     self.scaler = preprocessing.StandardScaler().fit(X)
     X_train = self.scaler.transform(X)
-    self.reg = linear_model.LogisticRegression(random_state=0).fit(X_train, y)
+    self.reg = linear_model.LogisticRegression(random_state=0,max_iter=10000).fit(X_train, y)
 
 
 
@@ -71,7 +71,7 @@ class EigenRegression(Classifier):
     self.width = width
     self.height = height
 
-    self.threshold = 0.3
+    self.threshold = 0.7
 
     self.model = decomposition.NMF(n_components=numPatterns, init="random", random_state=0, solver="mu", max_iter=10000)
 
@@ -89,7 +89,7 @@ class EigenRegression(Classifier):
     W = self.scaler.transform(raw)
     ps = zip(self.reg.predict_proba(W)[0],self.reg.classes_)
     sortedP = sorted(ps,reverse=True)
-    #print(sortedP)
+    print(sortedP)
     if sortedP[0][0] >= self.threshold:
        return sortedP[0][1]
     return "UNKN"
