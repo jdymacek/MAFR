@@ -8,10 +8,21 @@ class SimpleTrainer(Trainer):
     super(SimpleTrainer, self).__init__(files, patternNum)
     self.height = height
     self.width = width
+    self.weights = None
 
   def updateSize(self, height, width):
     self.height = height
     self.width = width
+
+  def weightsAsString(self):
+      rv = ""
+      for w in self.weights:
+        
+        rv += w[0] + ","
+        rv += ",".join(w[1])
+        
+        
+      return rv 
 
   def train(self):
     ml = []
@@ -39,6 +50,6 @@ class SimpleTrainer(Trainer):
     for line in lines:
       tokens = line.split(",")
       weights.append((tokens[0], tokens[1:]))
-
+    self.weights = weights
     h = self.model.components_
     return(weights, h)
