@@ -36,20 +36,9 @@ class SimpleTrainer(Trainer):
 
     w = self.model.fit_transform(M)
 
-    lines = []
+    self.weights = []
     for index, row in enumerate(w):
-      line = labels[index]
-      row = row/sum(row)
-      for val in row:
-        line += "," + str(np.round(val, decimals=7))
-      line += "\n"
-      lines.append(line)
-
+      self.weights.append((labels[index],np.round(row/sum(row), decimals=4)))
     
-    weights = []
-    for line in lines:
-      tokens = line.split(",")
-      weights.append((tokens[0], tokens[1:]))
-    self.weights = weights
     h = self.model.components_
-    return(weights, h)
+    return(self.weights, h)

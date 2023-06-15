@@ -31,4 +31,3 @@ trainer.updateSize((256-r), w)
 weights, patterns = trainer.train()
 
 vals = [w[1] for w in weights if w[0] == args.s]
-print(vals)
