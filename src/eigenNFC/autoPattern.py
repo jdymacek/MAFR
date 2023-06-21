@@ -1,9 +1,10 @@
 from EigenTrainer import SimpleTrainer
-from EigenClassifier import EigenRegression
+from EigenClassifier import EigenRegression, EigenBayes
 import os
 import subprocess
 import argparse
 import MAFR
+from ProbabilityModel import ProbabilityModel
 from Timer import Timer
 
 
@@ -30,19 +31,27 @@ for p in PATTERNS:
     trainer = SimpleTrainer(allTraining, p) 
     trainer.updateSize((256-r), w)
     weights, patterns = trainer.train()
+
     stopwatch.stop()
     stopwatch.print()
 
+    stopwatch.start()
+    bayes = ProbabilityModel(weights,classes,bins=50)
+
+
+    stopwatch.stop()
+    stopwatch.print()
 
     stopwatch.start()
-    classifier = EigenRegression(classes+["UNKN"], p, w, (256 - r))
+    classifier = EigenBayes(classes,p, w, (256 -r))
+    classifier.updateModel(patterns,bayes)
 
-    classifier.updateModel(patterns, weights)
     acc = classifier.classifyAll(allTesting)
+    print(acc)
     classifier.printConfusion()
     stopwatch.stop()
     stopwatch.print()
-    fout = open(f"{host}.txt", "a")
-    fout.write(f"{p},{w},{r},{round(acc,3)}\n")
-    fout.close()
+  #  fout = open(f"{host}.txt", "a")
+  #  fout.write(f"{p},{w},{r},{round(acc,3)}\n")
+  #  fout.close()
 

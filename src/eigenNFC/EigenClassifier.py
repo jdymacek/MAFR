@@ -48,6 +48,41 @@ class EigenClassifier(Classifier):
     return best[0]
 
 
+class EigenBayes(Classifier):
+  def updateModel(self, patterns, bayes):
+    self.bayes = bayes
+    self.patterns = patterns
+    self.model.components_ = patterns
+
+
+  def __init__(self, classes, numPatterns, width, height):
+    super(EigenBayes, self).__init__(classes)
+    self.patterns = None
+    self.weights = None
+    self.bayes = None
+    self.width = width
+    self.height = height
+    self.model = decomposition.NMF(n_components=numPatterns, init="random", random_state=0, solver="mu", max_iter=10000)
+    self.classes = classes
+
+    M = [np.ones(self.width*self.height)]
+    self.model.fit(M)
+
+  def classify(self, file):
+    M1 = [[eigenNFC.imageToVector(file, x=(256-self.width)//2, y=0, width=self.width, height=self.height)]]
+    M = np.concatenate(M1)
+    raw = self.model.transform(M)
+    raw[0] = raw[0]/sum(raw[0])
+
+    results = []
+    for c in self.classes:
+      results += [(self.bayes.pOf(raw[0],c),c)]
+
+    results = sorted(results,reverse=True)
+
+    return results[0][1]
+
+
 
 class EigenRegression(Classifier):
   def updateModel(self, patterns, weights):
@@ -89,10 +124,10 @@ class EigenRegression(Classifier):
     W = self.scaler.transform(raw)
     ps = zip(self.reg.predict_proba(W)[0],self.reg.classes_)
     sortedP = sorted(ps,reverse=True)
-    print(sortedP)
-    if sortedP[0][0] >= self.threshold:
-       return sortedP[0][1]
-    return "UNKN"
+    #if sortedP[0][0] >= self.threshold:
+    #   return sortedP[0][1]
+    #return "UNKN"
+    return sortedP[0][1]
 
 class EigenMajority(Classifier):
   def updateModel(self, patterns, weights):
