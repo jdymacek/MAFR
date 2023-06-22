@@ -23,6 +23,21 @@ class NOFL:
 
         return Image.fromarray(numpy.hstack([A,B]*n + [A]) ,mode=img.mode)
 
+    def reduce_noise(self, img):
+        data = numpy.asarray(img,dtype=numpy.uint32)
+        slices = numpy.hsplit(data,img.width//16)
+        third = len(slices)//3
+        pre = numpy.sum(slices[0:third],axis=0)/third
+        post = numpy.sum(slices[-third:0],axis=0)/third
+        slices = [x-(pre+post) for x in slices]
+        data = numpy.hstack(slices)
+        data *= 1.333
+        data[data < 0] = 0
+        data[data > 255] = 255
+        data = data.astype(numpy.uint8)
+        return Image.fromarray(data,mode=img.mode)
+
+
 
     def filter(self, org):
         #GREY -- grey scale the image
@@ -48,8 +63,7 @@ class NOFL:
             img = big
 
 
-        #remove noise
-
+        img = self.reduce_noise(img)
 
         #BLUR -- gaussian blur if wanted
         if self.blur_radius != None:

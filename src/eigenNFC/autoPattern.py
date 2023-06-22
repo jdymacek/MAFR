@@ -18,7 +18,7 @@ PATTERNS = eval("[x for x in range" + args.n + "]")
 
 host = os.uname()[1]
 w = 52
-r = 116
+r = 128
 
 allFiles, classes = MAFR.listAllFiles(args.d)
 allTraining, allTesting = MAFR.splitSamples(allFiles, classes, float(args.t))
