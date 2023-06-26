@@ -28,7 +28,7 @@ class Classifier:
 
   #correct label is directory
   def classifyAll(self, files):
-    self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
+    self.confusion = {k:{k:0 for k in self.classes+["????"]} for k in self.classes+["????"]}
     
 
     for f in files:

@@ -38,7 +38,10 @@ class SimpleTrainer(Trainer):
 
     self.weights = []
     for index, row in enumerate(w):
-      self.weights.append((labels[index],np.round(row/sum(row), decimals=4)))
+      if sum(row) > 0:
+          self.weights.append((labels[index],np.round(row/sum(row), decimals=4)))
+      else:
+          print(labels[index], row)
     
     h = self.model.components_
     return(self.weights, h)

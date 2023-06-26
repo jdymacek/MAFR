@@ -13,7 +13,8 @@ from PIL import Image
 parser = argparse.ArgumentParser(description= 'Get all h5 files')
 parser.add_argument('-d', help='directory for h5 files')
 parser.add_argument('-o', help='output directory')
-parser.add_argument('-r', help='reject file')
+parser.add_argument('-r', help='reject file', default=None)
+parser.add_argument('-m', help='mel-bands', default=None)
 args = parser.parse_args()
 
 h5Dir = args.d
@@ -24,9 +25,10 @@ species = {"1-1-2": "CHSP", "1-1-3":"SAVS", "1-4-1" :"AMRE", "1-4-2":"BBWA", "1-
 allFiles = [x[0] + "/" + y for x in os.walk(h5Dir) for y in x[2] if y.endswith("_original.h5") and y[-17:-12] in species ]
 
 cullSet = set()
-with open(args.r, 'r') as rejectFile:
-    lines = rejectFile.readlines()
-    cullSet = set([x.strip() for x in lines ]) 
+if args.r != None:
+    with open(args.r, 'r') as rejectFile:
+        lines = rejectFile.readlines()
+        cullSet = set([x.strip() for x in lines ]) 
     
 
 
@@ -50,10 +52,16 @@ for file in allFiles:
         for k in h5['waveforms'].keys():
             if k not in cullSet:
                  dataset = file[:-18].split("/")[-1]
-            
                  sp = species[file[-17:-12]]
                  data = h5['waveforms'][k][:]
-                 img = noiseFilter.filter(engine.mel_as_image(data,mel_bands=128))                
+                 #SHIFT OLDBIRD 12 pixels left for our orginial 7
+                 shift = 0
+                 if dataset == "oldbird":
+                     shift = -12
+                 if args.m == None:
+                     img = noiseFilter.filter(engine.spec_as_image(data),shift=shift)
+                 else:
+                     img = noiseFilter.filter(engine.mel_as_image(data,mel_bands=int(args.m)),shift=shift) 
                  img.save(outputDir + sp + "/" + k + ".png")
             else:
                  print(k)

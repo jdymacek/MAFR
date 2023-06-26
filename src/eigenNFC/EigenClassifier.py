@@ -1,5 +1,6 @@
 from Classifier import Classifier
 import MAFR
+from sklearn import cluster
 from sklearn import linear_model
 from sklearn import preprocessing
 from sklearn import decomposition
@@ -46,6 +47,111 @@ class EigenClassifier(Classifier):
         best = (guess, error)
 
     return best[0]
+
+
+
+class EigenMultiCluster(Classifier):
+  def updateModel(self, patterns, weights):
+    self.weights = weights
+    self.patterns = patterns
+    self.model.components_ = patterns
+
+    number_clusters = 200
+    self.clusters = {}
+
+    for c in self.classes:   
+        X = np.concatenate([[np.array(w[1], dtype=np.float64) for w in self.weights if w[0].split("/")[0] == c]])
+        number_clusters = min(200,len(X)//2)
+        self.clusters[c] = cluster.KMeans(n_clusters=number_clusters).fit(X)
+
+
+  def __init__(self, classes, numPatterns, width, height):
+    super(EigenMultiCluster, self).__init__(classes)
+
+    self.patterns = None
+    self.weights = None
+    self.clusters = None
+    self.width = width
+    self.height = height
+    self.threshold = 0.7
+
+    self.model = decomposition.NMF(n_components=numPatterns, init="random", random_state=0, solver="mu", max_iter=10000)
+
+    M = [np.ones(self.width*self.height)]
+    self.model.fit(M)
+
+
+  def classify(self, file):
+    M1 = [[eigenNFC.imageToVector(file, x=(256-self.width)//2, y=0, width=self.width, height=self.height)]]
+    M = np.concatenate(M1)
+    W = self.model.transform(M)
+    if sum(W[0]) == 0:
+        print("no signal\t", file)
+        return "????"      
+
+    W[0] = W[0]/sum(W[0])
+
+    ps = []
+    for c in self.classes:
+        predicted = self.clusters[c].predict([W[0]])[0]
+        ps += [(np.linalg.norm(self.clusters[c].cluster_centers_[predicted]-W[0]),c)]
+
+    sortedP = sorted(ps)
+    #if sortedP[0][0] >= self.threshold:
+    #   return sortedP[0][1]
+    return sortedP[0][1]
+
+class EigenCluster(Classifier):
+  def updateModel(self, patterns, weights):
+    self.weights = weights
+    self.patterns = patterns
+    self.model.components_ = patterns
+    y = [w[0].split("/")[0] for w in self.weights]
+    X = np.concatenate([[np.array(w[1], dtype=np.float64) for w in self.weights]])
+
+    number_clusters = 3000
+    self.cluster = cluster.KMeans(n_clusters=number_clusters).fit(X)
+    self.probs = [{c:0 for c in self.classes} for i in range(number_clusters)]
+   
+    for i in range(len(weights)):
+        cluster_index = self.cluster.labels_[i]
+        self.probs[cluster_index][weights[i][0]] = self.probs[cluster_index][weights[i][0]] + 1
+
+#    for p in self.probs:
+#        for c in self.classes:
+#            print(c + ": ",p[c],"\t",end="")
+#        print("")
+
+
+  def __init__(self, classes, numPatterns, width, height):
+    super(EigenCluster, self).__init__(classes)
+
+    self.patterns = None
+    self.weights = None
+    self.cluster = None
+    self.width = width
+    self.height = height
+    self.threshold = 0.7
+
+    self.model = decomposition.NMF(n_components=numPatterns, init="random", random_state=0, solver="mu", max_iter=10000)
+
+    M = [np.ones(self.width*self.height)]
+    self.model.fit(M)
+
+
+  def classify(self, file):
+    M1 = [[eigenNFC.imageToVector(file, x=(256-self.width)//2, y=0, width=self.width, height=self.height)]]
+    M = np.concatenate(M1)
+    W = self.model.transform(M)
+    W[0] = W[0]/sum(W[0])
+    predicted = self.cluster.predict([W[0]])
+    ps = [(self.probs[predicted[0]][c],c) for c in self.classes]
+
+    sortedP = sorted(ps,reverse=True)
+    #if sortedP[0][0] >= self.threshold:
+    #   return sortedP[0][1]
+    return sortedP[0][1]
+
 
 
 class EigenBayes(Classifier):

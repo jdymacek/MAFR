@@ -39,7 +39,7 @@ class NOFL:
 
 
 
-    def filter(self, org):
+    def filter(self, org, shift=0):
         #GREY -- grey scale the image
         img = ImageOps.grayscale(org.copy())
 
@@ -70,13 +70,26 @@ class NOFL:
             img = img.filter(ImageFilter.GaussianBlur(radius=self.blur_radius))
 
 
-        #CLEAN SIDES -- black out the sides
-        if org.width >= self.desired_width:
-            return img
 
-        fin = Image.new(img.mode,(self.desired_width,self.desired_height))
-        x = (self.desired_width - org.width)//2
-        fin.paste(img.crop((x,0,x+org.width,img.height)),(x,0,x+org.width,img.height))
+        #CLEAN SIDES -- black out the sides
+        cln = img
+        if org.width < self.desired_width:
+            cln = Image.new(img.mode,(self.desired_width,self.desired_height))
+            x = (self.desired_width - org.width)//2
+            cln.paste(img.crop((x,0,x+org.width,img.height)),(x,0,x+org.width,img.height))
+
+
+        #SHIFT -- shift the image fill with black
+        if shift == 0:
+            return cln
+
+        fin = Image.new(img.mode,(self.desired_width,self.desired_height))         
+        img = cln.crop((max(0,-shift),0,min(self.desired_width-shift,self.desired_width),self.desired_height))
+        fin.paste(img,(max(0,shift),0,max(0,shift)+img.width,img.height))
+
+#        draw = ImageDraw.Draw(fin)
+#        draw.line([(fin.width//2,0),(fin.width//2,fin.height)],fill=255)
+
         return fin
 	
 """

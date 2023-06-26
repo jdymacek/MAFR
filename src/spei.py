@@ -80,7 +80,7 @@ def pretty_spectrogram(d, log=True, thresh=5, fft_size=512, step_size=64):
 
     if log == True:
         specgram /= specgram.max()  # volume normalize to max 1
-        specgram = numpy.log10(specgram)  # take log
+        specgram = 2*numpy.log10(specgram)  # take log
         specgram[ specgram < -thresh] = -thresh  # set anything less than the threshold as the threshold
     else:
         specgram[ specgram < thresh ] = thresh  # set anything less than the threshold as the threshold
@@ -162,7 +162,7 @@ def create_mel_filter(
 
 
 class SPEI:
-    def __init__(self, fft_size = 512,hop_size = 42, spec_thresh = 4):
+    def __init__(self, fft_size = 512,hop_size = 42, spec_thresh = 6):
         self.fft_size = fft_size
         self.step_size = hop_size
         self.spec_thresh = spec_thresh

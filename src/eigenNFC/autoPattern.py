@@ -1,5 +1,5 @@
 from EigenTrainer import SimpleTrainer
-from EigenClassifier import EigenRegression, EigenBayes
+from EigenClassifier import EigenRegression, EigenBayes, EigenCluster, EigenMultiCluster
 import os
 import subprocess
 import argparse
@@ -17,8 +17,11 @@ args = parser.parse_args()
 PATTERNS = eval("[x for x in range" + args.n + "]")
 
 host = os.uname()[1]
+#w = 52
+#r = 128
+
 w = 52
-r = 128
+r = 52
 
 allFiles, classes = MAFR.listAllFiles(args.d)
 allTraining, allTesting = MAFR.splitSamples(allFiles, classes, float(args.t))
@@ -35,16 +38,17 @@ for p in PATTERNS:
     stopwatch.stop()
     stopwatch.print()
 
+    #bayes = ProbabilityModel(weights,classes,bins=50)
+
+
     stopwatch.start()
-    bayes = ProbabilityModel(weights,classes,bins=50)
-
-
+    #classifier = EigenBayes(classes,p, w, (256 -r))
+    classifier = EigenMultiCluster(classes,p, w, (256-r))
     stopwatch.stop()
     stopwatch.print()
 
     stopwatch.start()
-    classifier = EigenBayes(classes,p, w, (256 -r))
-    classifier.updateModel(patterns,bayes)
+    classifier.updateModel(patterns,weights)
 
     acc = classifier.classifyAll(allTesting)
     print(acc)
