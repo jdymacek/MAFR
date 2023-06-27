@@ -17,6 +17,7 @@ parser.add_argument('-d', help='directory for h5 files')
 parser.add_argument('-o', help='output directory')
 parser.add_argument('-r', help='reject file', default=None)
 parser.add_argument('-m', help='mel-bands', default=None)
+parser.add_argument('-s', help='shift?' , default=None)
 args = parser.parse_args()
 
 h5Dir = args.d
@@ -58,7 +59,7 @@ for file in allFiles:
                  data = h5['waveforms'][k][:]
                  #SHIFT OLDBIRD 12 pixels left for our orginial 7
                  shift = 0
-                 if dataset == "oldbird":
+                 if dataset == "oldbird" and args.s != None::
                      shift = -12
                  if args.m == None:
                      img = noiseFilter.filter(engine.spec_as_image(data),shift=shift)
