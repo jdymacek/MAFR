@@ -56,18 +56,17 @@ class EigenMultiCluster(Classifier):
     self.patterns = patterns
     self.model.components_ = patterns
 
-    number_clusters = 200
     self.clusters = {}
 
     for c in self.classes:   
         X = np.concatenate([[np.array(w[1], dtype=np.float64) for w in self.weights if w[0].split("/")[0] == c]])
         number_clusters = min(200,len(X)//2)
-        self.clusters[c] = cluster.KMeans(n_clusters=number_clusters).fit(X)
-
+        self.clusters[c] = cluster.KMeans(n_clusters=min(self.number_clusters,len(X)//2)).fit(X)
 
   def __init__(self, classes, numPatterns, width, height):
     super(EigenMultiCluster, self).__init__(classes)
-
+    self.number_clusters = 200
+    self.name = "EigenMultiCluster (" + str(self.number_clusters) + ")"
     self.patterns = None
     self.weights = None
     self.clusters = None

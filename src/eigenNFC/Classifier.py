@@ -7,6 +7,7 @@ class Classifier:
     self.classes = classes
     self.acccuracy = 0.0
     self.confusion = {k:{k:0 for k in self.classes} for k in self.classes}
+    self.name = "Classifier (default)"
   
   def classify(self, file):
     print("ERROR: MUST BE OVERWRITTEN BY SUBCLASS")
@@ -24,6 +25,9 @@ class Classifier:
 
   def findRecall(onlyClasses=None):
     return 0
+  
+  def __str__(self):
+    return self.name
 
 
   #correct label is directory

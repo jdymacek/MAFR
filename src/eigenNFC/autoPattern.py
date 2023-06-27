@@ -20,6 +20,7 @@ host = os.uname()[1]
 #w = 52
 #r = 128
 
+analysis = "Shifted"
 w = 52
 r = 52
 
@@ -41,21 +42,23 @@ for p in PATTERNS:
     #bayes = ProbabilityModel(weights,classes,bins=50)
 
 
-    stopwatch.start()
+    #stopwatch.start()
     #classifier = EigenBayes(classes,p, w, (256 -r))
     classifier = EigenMultiCluster(classes,p, w, (256-r))
-    stopwatch.stop()
-    stopwatch.print()
+    #stopwatch.stop()
+    #stopwatch.print()
+
 
     stopwatch.start()
     classifier.updateModel(patterns,weights)
 
     acc = classifier.classifyAll(allTesting)
-    print(acc)
-    classifier.printConfusion()
+  # classifier.printConfusion()
     stopwatch.stop()
     stopwatch.print()
-  #  fout = open(f"{host}.txt", "a")
-  #  fout.write(f"{p},{w},{r},{round(acc,3)}\n")
-  #  fout.close()
+    results = f"{classifier}\t{p}\t{w}\t{r}\t{float(args.t)}\t{analysis}\t{round(acc,4)}"
+    print(results)
+    fout = open(f"{host}.txt", "a")
+    fout.write(results+"\n")
+    fout.close()
 
