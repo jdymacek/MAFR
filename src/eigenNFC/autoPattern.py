@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from EigenTrainer import SimpleTrainer
 from EigenClassifier import EigenRegression, EigenBayes, EigenCluster, EigenMultiCluster
 import os
@@ -20,9 +22,13 @@ host = os.uname()[1]
 #w = 52
 #r = 128
 
-analysis = "Shifted"
+analysis = args.d.split("/")[-2]
+print(analysis)
 w = 52
 r = 52
+if analysis.startswith("mel"):
+    r = 128
+
 
 allFiles, classes = MAFR.listAllFiles(args.d)
 allTraining, allTesting = MAFR.splitSamples(allFiles, classes, float(args.t))
