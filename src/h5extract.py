@@ -59,7 +59,7 @@ for file in allFiles:
                  data = h5['waveforms'][k][:]
                  #SHIFT OLDBIRD 12 pixels left for our orginial 7
                  shift = 0
-                 if dataset == "oldbird" and args.s != None::
+                 if dataset == "oldbird" and args.s != None:
                      shift = -12
                  if args.m == None:
                      img = noiseFilter.filter(engine.spec_as_image(data),shift=shift)
