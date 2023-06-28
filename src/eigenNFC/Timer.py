@@ -17,7 +17,7 @@ class Timer:
         if self._startTime == None:
             return None
         self._elapsed = time.perf_counter() - self._startTime
-        self._elapsedCPU = time.process_time() - self.startCPUTime
+        self._elapsedCPU = time.process_time() - self._startCPUTime
         self._startCPUTime = None
         self._startTime = None
         return self._elapsed, self._elapsedCPU
